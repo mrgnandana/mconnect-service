@@ -51,7 +51,7 @@ public class CompanyManager {
                                                 contact.put("position_id", row.getInteger("position_id"));
                                                 contact.put("position_name", row.getString("position_name"));
                                                 contact.put("company_structure_id", row.getInteger("company_structure_id"));
-                                                contact.put("company_structure_name",row.getString("company_structure_name"));
+                                                contact.put("company_structure_name", row.getString("company_structure_name"));
                                                 contact.put("anyone_can_call", row.getBoolean("anyone_can_call"));
                                                 contact.put("last_updated_time", row.getLong("last_updated_time"));
 
@@ -123,6 +123,36 @@ public class CompanyManager {
                             structure.put("sort_index", row.getInteger("sort_index"));
 
                             result.add(structure);
+                        }
+                        conn.close();
+                        response.complete(result);
+                    });
+                } else {
+                    response.fail("Database Connection Failed");
+                }
+            });
+        } catch (Exception ex) {
+            response.fail(ex);
+        }
+
+        return response.future();
+    }
+
+    public Future<JsonArray> getPositionList() {
+        Promise<JsonArray> response = Promise.promise();
+        try {
+            dbClient.getPool().getConnection(con -> {
+                if (con.succeeded()) {
+                    SqlConnection conn = con.result();
+                    conn.query("select * from com_position").execute().onComplete(res -> {
+                        RowSet<Row> rows = res.result();
+                        JsonArray result = new JsonArray();
+                        for (Row row : rows) {
+                            JsonObject position = new JsonObject();
+                            position.put("position_id", row.getInteger("position_id"));
+                            position.put("position_name", row.getString("position_name"));
+
+                            result.add(position);
                         }
                         conn.close();
                         response.complete(result);

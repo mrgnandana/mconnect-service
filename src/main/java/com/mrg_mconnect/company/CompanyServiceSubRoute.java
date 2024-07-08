@@ -30,6 +30,9 @@ public class CompanyServiceSubRoute extends SubRouter {
 
         // structure
         subRouter.get(mountPoint + "/structure/list").handler(this::handleCompanyStructureList);
+
+         // position
+         subRouter.get(mountPoint + "/positions/list").handler(this::handleCompanyPositionList);
     }
 
     private void handleContactList(RoutingContext ctx) {
@@ -94,6 +97,37 @@ public class CompanyServiceSubRoute extends SubRouter {
         try {
             JsonObject requestObj = new JsonObject();
             JsonObject msg = new JsonObject().put("method", "company.structure_list").put("data", requestObj);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        response.putHeader("content-type", "application/json")
+                                .end(msgResult.getJsonArray("data").encodePrettily());
+                    } else {
+                        JsonObject errorRresponseData = new ErrorResponse.Builder()
+                                .message(res.cause().getMessage())
+                                .errorNo(400).build();
+                        response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                    }
+                } else {
+                    JsonObject errorRresponseData = new ErrorResponse.Builder().message(res.cause().getMessage())
+                            .errorNo(400).build();
+                    response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                }
+            });
+        } catch (Exception e) {
+            JsonObject errorRresponseData = new ErrorResponse.Builder().message(e.getMessage()).errorNo(400).build();
+            response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+        }
+
+    }
+
+    private void handleCompanyPositionList(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            JsonObject requestObj = new JsonObject();
+            JsonObject msg = new JsonObject().put("method", "company.position_list").put("data", requestObj);
             vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
                 if (res.succeeded()) {
                     JsonObject msgResult = (JsonObject) res.result().body();

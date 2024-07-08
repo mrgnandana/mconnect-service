@@ -44,6 +44,10 @@ public class CompanyVerticle extends AbstractVerticle {
                         getStructureList(message, req.getJsonObject("data"));
                         break;
 
+                    case "company.position_list":
+                        getPositionList(message, req.getJsonObject("data"));
+                        break;
+
                     default:
                         throw new Exception("Invalid option");
                 }
@@ -74,6 +78,17 @@ public class CompanyVerticle extends AbstractVerticle {
                 MessageHelper.successReply(message, res.result());
             } else {
                 MessageHelper.errorReply(message, "Get Company Structure List request failed", 2);
+            }
+        });
+    }
+
+    private void getPositionList(Message<Object> message, JsonObject data) {
+
+        companyManager.getPositionList().andThen(res -> {
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, "Get Company Position List request failed", 2);
             }
         });
     }
