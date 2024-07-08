@@ -48,7 +48,8 @@ public class CompanyVerticle extends AbstractVerticle {
                 message.reply("");
             }
         });
-System.out.println("company verticle start success");
+        System.out.println("company verticle start success");
+        startPromise.complete();
     }
 
     private void getContactList(Message<Object> message) {

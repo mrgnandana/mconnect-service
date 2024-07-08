@@ -73,7 +73,7 @@ public class MainVerticle extends AbstractVerticle {
         dbConfig.setDbHost(config().getString("db.host", "localhost"));
         dbConfig.setDbUser(config().getString("db.user", "root"));
         dbConfig.setDbUserPassword(config().getString("db.user.password", ""));
-        dbConfig.setDbPort(config().getInteger("db.user.password", 3306));
+        dbConfig.setDbPort(config().getInteger("db.port", 3306));
         DbClient.getInstance().setConfig(dbConfig);
     }
 
