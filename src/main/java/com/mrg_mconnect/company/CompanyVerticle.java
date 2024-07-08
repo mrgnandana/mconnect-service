@@ -6,6 +6,8 @@
 package com.mrg_mconnect.company;
 
 import com.mrg_mconnect.company.manager.CompanyManager;
+import com.mrg_mconnect.service_commons.MessageHelper;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
@@ -25,7 +27,6 @@ public class CompanyVerticle extends AbstractVerticle {
 
     @Override
     public void start(Promise<Void> startPromise) throws Exception {
-        System.out.println("company verticle started");
         companyManager = new CompanyManager();
         vertx.eventBus().consumer(EVENT_BUS_ADDRESS, (message) -> {
             try {
@@ -36,7 +37,7 @@ public class CompanyVerticle extends AbstractVerticle {
 
                 switch (method) {
                     case "company.contact_list":
-                        getContactList(message);
+                        getContactList(message, req.getJsonObject("data"));
                         break;
 
                     default:
@@ -48,16 +49,18 @@ public class CompanyVerticle extends AbstractVerticle {
                 message.reply("");
             }
         });
-        System.out.println("company verticle start success");
         startPromise.complete();
     }
 
-    private void getContactList(Message<Object> message) {
-        companyManager.getContactList(1, 10, "u1", 0).andThen(res -> {
-            JsonObject rest = new JsonObject()
-                    .put("success", true).put("data", res.result());
+    private void getContactList(Message<Object> message, JsonObject data) {
 
-            message.reply(rest);
+        companyManager.getContactList(data.getInteger("page"), data.getInteger("limit"), data.getString("user_id"),
+                data.getLong("update_time")).andThen(res -> {
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, "Get Contact List request failed", 2);
+            }
         });
     }
 

@@ -1,6 +1,7 @@
 package com.mrg_mconnect.company;
 
 import com.mrg_mconnect.company.manager.CompanyManager;
+import com.mrg_mconnect.service_commons.ErrorResponse;
 import com.mrg_mconnect.service_commons.SubRouter;
 
 import io.vertx.core.Vertx;
@@ -29,25 +30,32 @@ public class CompanyServiceSubRoute extends SubRouter {
     private void handleContactList(RoutingContext ctx) {
         HttpServerResponse response = ctx.response();
 
-        JsonObject requestObj = ctx.body().asJsonObject();
-        //validate page limit updated time,user_id
-        //call bussinres class method
-        JsonObject msg = new JsonObject().put("method", "company.contact_list").put("data", requestObj);
-        vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
-            if (res.succeeded()) {
-                JsonObject msgResult = (JsonObject) res.result().body();
-                if (msgResult.getBoolean("success")) {
-                    response.putHeader("content-type", "application/json").end(msgResult.getJsonObject("data").encodePrettily());
+        try {
+            JsonObject requestObj = ctx.body().asJsonObject();
+            //validate page limit updated time,user_id
+            //call bussinres class method
+            JsonObject msg = new JsonObject().put("method", "company.contact_list").put("data", requestObj);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        response.putHeader("content-type", "application/json")
+                                .end(msgResult.getJsonArray("data").encodePrettily());
+                    } else {
+                        JsonObject errorRresponseData = new ErrorResponse.Builder().message("Get Contact List request failed")
+                                .errorNo(400).build();
+                        response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                    }
                 } else {
-                    response.setStatusCode(400).end();              }
-            } else {
-                 response.setStatusCode(400).end();  
-            }
-        });
-
-        ctx.response().setStatusCode(400)
-                .putHeader("content-type", "application/json")
-                .end(requestObj.encodePrettily());
+                    JsonObject errorRresponseData = new ErrorResponse.Builder().message(res.cause().getMessage())
+                            .errorNo(400).build();
+                    response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                }
+            });
+        } catch (Exception e) {
+            JsonObject errorRresponseData = new ErrorResponse.Builder().message(e.getMessage()).errorNo(400).build();
+            response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+        }
 
     }
 

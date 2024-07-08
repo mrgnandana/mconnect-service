@@ -42,7 +42,7 @@ public class RESTMainVerticle extends AbstractVerticle {
 
         // init router
         this.router = Router.router(vertx);
-        // handleCors();
+        handleCors();
 
         router.route().handler(BodyHandler.create());
 
@@ -52,9 +52,9 @@ public class RESTMainVerticle extends AbstractVerticle {
         SubRouter authService = new AuthServiceSubRoute(vertx, router);
         authService.setup();
         router.route().subRouter(authService.getSubRouter());
-        
-         SubRouter companyService = new CompanyServiceSubRoute(vertx, router);
-         companyService.setup();
+
+        SubRouter companyService = new CompanyServiceSubRoute(vertx, router);
+        companyService.setup();
         router.route().subRouter(companyService.getSubRouter());
 
         // String discoveryAnounceAddress = config().getString("discovery.address",
@@ -66,7 +66,6 @@ public class RESTMainVerticle extends AbstractVerticle {
         // .setAnnounceAddress(discoveryAnounceAddress)
         // .setName(discoveryName)
         // .setBackendConfiguration(config()));
-
         //String serviceHost = config().getString("service.host", "localhost");
         int port = config().getInteger("service.port", 8080);
 
@@ -87,25 +86,25 @@ public class RESTMainVerticle extends AbstractVerticle {
 
     private void handleCors() {
         // cors handler start
-        // Set<String> allowedHeaders = new HashSet<>();
-        // allowedHeaders.add("x-requested-with");
-        // allowedHeaders.add("Access-Control-Allow-Origin");
-        // allowedHeaders.add("origin");
-        // allowedHeaders.add("Content-Type");
-        // allowedHeaders.add("accept");
-        // allowedHeaders.add("X-PINGARUNER");
-        // allowedHeaders.add("Authorization");
-        // allowedHeaders.add("userId");
+        Set<String> allowedHeaders = new HashSet<>();
+        allowedHeaders.add("x-requested-with");
+        allowedHeaders.add("Access-Control-Allow-Origin");
+        allowedHeaders.add("origin");
+        allowedHeaders.add("Content-Type");
+        allowedHeaders.add("accept");
+        allowedHeaders.add("X-PINGARUNER");
+        allowedHeaders.add("Authorization");
+        allowedHeaders.add("userId");
 
-        // Set<HttpMethod> allowedMethods = new HashSet<>();
-        // allowedMethods.add(HttpMethod.GET);
-        // allowedMethods.add(HttpMethod.POST);
-        // allowedMethods.add(HttpMethod.OPTIONS);
-        // allowedMethods.add(HttpMethod.DELETE);
-        // allowedMethods.add(HttpMethod.PATCH);
-        // allowedMethods.add(HttpMethod.PUT);
-        // router.route().handler(CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
-        // cors handler end
+        Set<HttpMethod> allowedMethods = new HashSet<>();
+        allowedMethods.add(HttpMethod.GET);
+        allowedMethods.add(HttpMethod.POST);
+        allowedMethods.add(HttpMethod.OPTIONS);
+        allowedMethods.add(HttpMethod.DELETE);
+        allowedMethods.add(HttpMethod.PATCH);
+        allowedMethods.add(HttpMethod.PUT);
+        router.route().handler(CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
+//         cors handler end
     }
 
     // private void publishHttpEndpoint(String serviceHost, int servicePort, String
@@ -124,9 +123,7 @@ public class RESTMainVerticle extends AbstractVerticle {
     // }
     // discovery.close();
     // });
-
     // }
-
     private void handleHealthCheck(RoutingContext ctx) {
         try {
             JsonObject o = new JsonObject();

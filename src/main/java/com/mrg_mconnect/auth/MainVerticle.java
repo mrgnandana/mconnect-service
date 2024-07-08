@@ -74,7 +74,7 @@ public class MainVerticle extends AbstractVerticle {
         dbConfig.setDbUser(config().getString("db.user", "root"));
         dbConfig.setDbUserPassword(config().getString("db.user.password", ""));
         dbConfig.setDbPort(config().getInteger("db.port", 3306));
-        DbClient.getInstance().setConfig(dbConfig);
+        DbClient.getInstance().configure(vertx, dbConfig);
     }
 
     private Future<Void> startVerticles() {

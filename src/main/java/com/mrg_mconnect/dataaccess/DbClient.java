@@ -1,10 +1,10 @@
 package com.mrg_mconnect.dataaccess;
 
+import io.vertx.core.Vertx;
 import io.vertx.mysqlclient.MySQLBuilder;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.PoolOptions;
-import io.vertx.sqlclient.SqlClient;
 
 public class DbClient {
 
@@ -12,6 +12,7 @@ public class DbClient {
 
     DbConfig config;
     Pool dbPool;
+    Vertx vertx;
 
     private DbClient() {
     }
@@ -30,20 +31,26 @@ public class DbClient {
 
     public void createPool() {
         if (config != null) {
-            MySQLConnectOptions connectOptions = new MySQLConnectOptions()
-                    .setPort(config.getDbPort())
-                    .setHost(config.dbHost)
-                    .setDatabase(config.dbName)
-                    .setUser(config.dbUser)
-                    .setPassword(config.dbUserPassword);
+            try {
+                MySQLConnectOptions connectOptions = new MySQLConnectOptions()
+                        .setPort(config.getDbPort())
+                        .setHost(config.getDbHost())
+                        .setDatabase(config.getDbName())
+                        .setUser(config.getDbUser())
+                        .setPassword(config.getDbUserPassword());
 
-            PoolOptions poolOptions = new PoolOptions()
-                    .setMaxSize(5);
+                PoolOptions poolOptions = new PoolOptions()
+                        .setMaxSize(5);
 
-            dbPool = MySQLBuilder.pool()
-                    .with(poolOptions)
-                    .connectingTo(connectOptions)
-                    .build();
+                dbPool = MySQLBuilder.pool()
+                        .with(poolOptions)
+                        .connectingTo(connectOptions)
+                        .using(vertx)
+                        .build();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
         }
 
     }
@@ -62,6 +69,10 @@ public class DbClient {
             return dbPool;
         }
     }
-    
-    
+
+    public void configure(Vertx vertx, DbConfig config) {
+        this.vertx = vertx;
+        setConfig(config);
+    }
+
 }
