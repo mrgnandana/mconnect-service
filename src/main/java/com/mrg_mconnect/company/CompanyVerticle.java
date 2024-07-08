@@ -5,7 +5,7 @@
  */
 package com.mrg_mconnect.company;
 
-import com.mrg_mconnect.company.manager.CompanyManager;
+import com.mrg_mconnect.manager.CompanyManager;
 import com.mrg_mconnect.service_commons.MessageHelper;
 
 import io.vertx.core.AbstractVerticle;
@@ -40,13 +40,16 @@ public class CompanyVerticle extends AbstractVerticle {
                         getContactList(message, req.getJsonObject("data"));
                         break;
 
+                    case "company.structure_list":
+                        getStructureList(message, req.getJsonObject("data"));
+                        break;
+
                     default:
                         throw new Exception("Invalid option");
                 }
             } catch (Exception ex) {
                 logger.error(ex.getMessage());
-
-                message.reply("");
+                MessageHelper.errorReply(message, ex.getMessage(), 1);
             }
         });
         startPromise.complete();
@@ -56,10 +59,21 @@ public class CompanyVerticle extends AbstractVerticle {
 
         companyManager.getContactList(data.getInteger("page"), data.getInteger("limit"), data.getString("user_id"),
                 data.getLong("update_time")).andThen(res -> {
+                    if (res.succeeded()) {
+                        MessageHelper.successReply(message, res.result());
+                    } else {
+                        MessageHelper.errorReply(message, res.cause().getMessage(), 2);
+                    }
+                });
+    }
+
+    private void getStructureList(Message<Object> message, JsonObject data) {
+
+        companyManager.getStructureList().andThen(res -> {
             if (res.succeeded()) {
                 MessageHelper.successReply(message, res.result());
             } else {
-                MessageHelper.errorReply(message, "Get Contact List request failed", 2);
+                MessageHelper.errorReply(message, "Get Company Structure List request failed", 2);
             }
         });
     }

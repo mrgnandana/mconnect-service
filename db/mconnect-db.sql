@@ -149,7 +149,11 @@ DROP TABLE IF EXISTS `vcom_employee`;
  `email` varchar(320) ,
  `position_id` int ,
  `company_structure_id` int ,
- `anyone_can_call` tinyint 
+ `anyone_can_call` tinyint ,
+ `last_updated_time` int ,
+ `is_deactivated` tinyint ,
+ `position_name` varchar(128) ,
+ `company_structure_name` varchar(128) 
 )*/;
 
 /*View structure for view vcom_employee */
@@ -157,7 +161,7 @@ DROP TABLE IF EXISTS `vcom_employee`;
 /*!50001 DROP TABLE IF EXISTS `vcom_employee` */;
 /*!50001 DROP VIEW IF EXISTS `vcom_employee` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vcom_employee` AS select `com_employee`.`id` AS `id`,`com_employee`.`emp_id` AS `emp_id`,`com_employee`.`emp_name` AS `emp_name`,`com_employee`.`mobile_no` AS `mobile_no`,`com_employee`.`email` AS `email`,`com_employee`.`position_id` AS `position_id`,`com_employee`.`company_structure_id` AS `company_structure_id`,`com_employee`.`anyone_can_call` AS `anyone_can_call` from `com_employee` */;
+/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vcom_employee` AS select `ce`.`id` AS `id`,`ce`.`emp_id` AS `emp_id`,`ce`.`emp_name` AS `emp_name`,`ce`.`mobile_no` AS `mobile_no`,`ce`.`email` AS `email`,`ce`.`position_id` AS `position_id`,`ce`.`company_structure_id` AS `company_structure_id`,`ce`.`anyone_can_call` AS `anyone_can_call`,`ce`.`last_updated_time` AS `last_updated_time`,`ce`.`is_deactivated` AS `is_deactivated`,`cp`.`position_name` AS `position_name`,`cs`.`structure_name` AS `company_structure_name` from ((`com_employee` `ce` left join `com_position` `cp` on((`ce`.`position_id` = `cp`.`position_id`))) left join `com_structure` `cs` on((`ce`.`company_structure_id` = `cs`.`structure_id`))) */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

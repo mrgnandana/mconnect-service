@@ -5,7 +5,7 @@
  */
 package com.mrg_mconnect.auth;
 
-import com.mrg_mconnect.company.manager.CompanyManager;
+import com.mrg_mconnect.manager.CompanyManager;
 import com.mrg_mconnect.service_commons.MessageHelper;
 
 import io.vertx.core.AbstractVerticle;
