@@ -96,6 +96,7 @@ public class MainVerticle extends AbstractVerticle {
 
         list.add(deployVerticle(vertx, options, RESTMainVerticle.class.getName()));
         list.add(deployVerticle(vertx, options, CompanyVerticle.class.getName()));
+        list.add(deployVerticle(vertx, options, AuthVerticle.class.getName()));
 
         Future.all(list).onComplete(res -> {
             if (res.succeeded()) {

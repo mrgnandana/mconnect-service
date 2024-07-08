@@ -5,7 +5,7 @@
  */
 package com.mrg_mconnect.auth;
 
-import com.mrg_mconnect.manager.CompanyManager;
+import com.mrg_mconnect.manager.AuthManager;
 import com.mrg_mconnect.service_commons.MessageHelper;
 
 import io.vertx.core.AbstractVerticle;
@@ -23,18 +23,18 @@ public class AuthVerticle extends AbstractVerticle {
 
     private final Logger logger = LoggerFactory.getLogger(AuthVerticle.class);
     final String EVENT_BUS_ADDRESS = "com.mconnect.auth";
-    CompanyManager companyManager;
+    AuthManager authManager;
 
     @Override
     public void start(Promise<Void> startPromise) throws Exception {
         System.out.println("auth verticle starting");
-        companyManager = new CompanyManager();
+        authManager = new AuthManager();
         vertx.eventBus().consumer(EVENT_BUS_ADDRESS, (message) -> {
             try {
                 JsonObject req = (JsonObject) message.body();
                 String method = req.getString("method");
 
-                // logger.debug("method ---> " + method);
+                logger.debug("method ---> " + method);
 
                 switch (method) {
                     case "auth.login_request":
@@ -53,14 +53,16 @@ public class AuthVerticle extends AbstractVerticle {
     }
 
     private void loginRequest(Message<Object> message, JsonObject data) {
-        companyManager.getContactList(1, 10, "u1", 0).andThen(res -> {
+        //MessageHelper.errorReply(message, "Test error message", 2);
+        System.out.println("Login request auth verticle");
+        authManager.requestLogin(data.getString("mobile_no"), data.getString("emp_id"), "", data.getString("device_id")).andThen(res -> {
             if (res.succeeded()) {
                 JsonObject resx = new JsonObject()
                         .put("success", true).put("data", res.result());
 
                 MessageHelper.successReply(message, resx);
             } else {
-                MessageHelper.errorReply(message, "Login request failed", 2);
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
             }
 
         });

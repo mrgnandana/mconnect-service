@@ -68,7 +68,12 @@ public class AuthServiceSubRoute extends SubRouter {
         try {
 
             JsonObject requestObj = ctx.body().asJsonObject();
-            // validate mobile_no/emp_id
+            // validate mobile_no/emp_id, device id
+            String deviceId = "";
+            if (requestObj.getString("device_id") != null) {
+                deviceId = requestObj.getString("device_id").trim();
+            }
+
             String mobileNo = "";
             if (requestObj.getString("mobile_no") != null) {
                 mobileNo = requestObj.getString("mobile_no").trim();
@@ -81,6 +86,10 @@ public class AuthServiceSubRoute extends SubRouter {
 
             if (mobileNo.isEmpty() && empId.isEmpty()) {
                 throw new Exception("Mobile no or emp id is required");
+            }
+
+            if(deviceId.isEmpty()){
+                throw new Exception("Invalid device id");
             }
 
             // call bussinres class method
