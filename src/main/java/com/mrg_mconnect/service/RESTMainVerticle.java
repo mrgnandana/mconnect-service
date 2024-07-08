@@ -1,5 +1,6 @@
-package com.mrg_mconnect.auth;
+package com.mrg_mconnect.service;
 
+import com.mrg_mconnect.auth.AuthServiceSubRoute;
 import com.mrg_mconnect.company.CompanyServiceSubRoute;
 import java.time.Instant;
 import java.util.HashSet;

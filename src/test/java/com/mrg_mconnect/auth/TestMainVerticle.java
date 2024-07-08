@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.mrg_mconnect.service.MainVerticle;
+
 @ExtendWith(VertxExtension.class)
 public class TestMainVerticle {
 

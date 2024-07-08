@@ -1,5 +1,6 @@
-package com.mrg_mconnect.auth;
+package com.mrg_mconnect.service;
 
+import com.mrg_mconnect.auth.AuthVerticle;
 import com.mrg_mconnect.company.CompanyVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;

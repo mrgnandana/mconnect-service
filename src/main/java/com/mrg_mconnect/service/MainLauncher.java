@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mrg_mconnect.company;
+package com.mrg_mconnect.service;
 
-import com.mrg_mconnect.auth.MainVerticle;
 import io.vertx.core.Launcher;
 import io.vertx.core.Vertx;
 
