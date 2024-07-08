@@ -50,9 +50,11 @@ public class RESTMainVerticle extends AbstractVerticle {
         router.get("/health").handler(this::handleHealthCheck);
 
         SubRouter authService = new AuthServiceSubRoute(vertx, router);
+        authService.setup();
         router.route().subRouter(authService.getSubRouter());
         
          SubRouter companyService = new CompanyServiceSubRoute(vertx, router);
+         companyService.setup();
         router.route().subRouter(companyService.getSubRouter());
 
         // String discoveryAnounceAddress = config().getString("discovery.address",
