@@ -1,0 +1,1018 @@
+{
+	"info": {
+		"_postman_id": "24cbc850-2fa9-40bf-9b50-f370004f855a",
+		"name": "mconnect",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8716363"
+	},
+	"item": [
+		{
+			"name": "auth/login-request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mobile_number\": \"+94713056295\",\n    \"device_id\": \"\",\n    \"device_type\":\"\", //mobile, tab, web, desktop\n    \"device_model\":\"\",\n    \"device_name\": \"\",\n    \"device_os\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/auth/login-request",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"auth",
+						"login-request"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mobile_number\": \"+94713056295\",\n    \"client_id\": \"{yourClientID}\",\n    \"client_secret\": \"{yourClientSecret}\" // For Regular Web Applications\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{backedURL}}/auth/login-request",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"auth",
+								"login-request"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 204,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "auth/token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"sid\":\"s1\",\n  \"phone_number\":\"<email address>\", // or \"<phone number>\"\n  \"otp\": \"CODE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/auth/token",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"phone_number\":\"<email address>\", // or \"<phone number>\"\n  \"otp\": \"CODE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{backedURL}}/auth/token",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n\"access_token\":\"eyJz93a...k4laUWw\",\n\"refresh_token\":\"GEbRxBN...edjnXbL\",\n\"token_type\":\"Bearer\",\n\"expires_in\":86400\n}"
+				}
+			]
+		},
+		{
+			"name": "auth/refresh",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"refresh_token\":\"r1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/auth/refresh",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"phone_number\":\"<email address>\", // or \"<phone number>\"\n  \"otp\": \"CODE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{backedURL}}/auth/token",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n\"access_token\":\"eyJz93a...k4laUWw\",\n\"refresh_token\":\"GEbRxBN...edjnXbL\",\n\"token_type\":\"Bearer\",\n\"expires_in\":86400\n}"
+				}
+			]
+		},
+		{
+			"name": "company/structure",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Branch/office/side/department name\",\n    \"parent_id\": \"parent_id\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/structure",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"structure"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Branch/office/side/department name\",\n    \"parent_id\": \"parent_id\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{backedURL}}/company/structure",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"company",
+								"structure"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"name\": \"Branch/office/side/department name\",\n    \"parent_id\": \"parent_id\",\n    \"id\" : \"\"\n}"
+				}
+			]
+		},
+		{
+			"name": "company/structure/list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/structure/list",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"structure",
+						"list"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{backedURL}}/company/structure/list",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"company",
+								"structure",
+								"list"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"name\": \"Branch/office/side/department name\",\n        \"parent_id\": \"parent_id\",\n        \"id\": \"a\"\n    },\n    {\n        \"name\": \"Branch/office/side/department name\",\n        \"parent_id\": \"parent_id\",\n        \"id\": \"a\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "company/structure",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/structure/{structure_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"structure",
+						"{structure_id}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{backedURL}}/company/structure/list",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"company",
+								"structure",
+								"list"
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "company/structure",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Branch/office/side/department name\",\n    \"parent_id\": \"parent_id\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/structure/{structure_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"structure",
+						"{structure_id}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Branch/office/side/department name\",\n    \"parent_id\": \"parent_id\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{backedURL}}/company/structure",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"company",
+								"structure"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"name\": \"Branch/office/side/department name\",\n    \"parent_id\": \"parent_id\",\n    \"id\" : \"s1\"\n}"
+				}
+			]
+		},
+		{
+			"name": "company/employees/list",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"page\": 1,\n    \"limit\": 100\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/employees/list",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"employees",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/employees/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/employees/",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"employees",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/employees/{emp_id}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"\",\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/employees/{emp_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"employees",
+						"{emp_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/employees/{emp_id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/employees/{emp_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"employees",
+						"{emp_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/employees/{emp_id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/employees/{emp_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"employees",
+						"{emp_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/employees/{emp_id}/deactivate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/employees/{emp_id}/deactivate",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"employees",
+						"{emp_id}",
+						"deactivate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/contacts/list",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": \"\",//get this from token\n    \"page\": 1,\n    \"limit\": 100\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/employees/list",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"employees",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/positions/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/positions/",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"positions",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/positions/{_id}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"\",\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/positions/{_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"positions",
+						"{_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/positions/{_id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/positions/{_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"positions",
+						"{_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/positions/{_id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/positions/{_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"positions",
+						"{_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/positions/list",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"page\": 1,\n    \"limit\": 100\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/positions/list",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"positions",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/groups/{_id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/groups/{_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"groups",
+						"{_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/groups/{_id}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"\",\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/groups/{_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"groups",
+						"{_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/groups/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/groups/",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"groups",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/groups/list",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"page\": 1,\n    \"limit\": 100\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/groups/list",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"groups",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/groups/{_id}/members/{_mid}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/groups/{_id}/members/{_mid}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"groups",
+						"{_id}",
+						"members",
+						"{_mid}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/groups/{_id}/members/{_mid}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"\",\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/groups/{_id}/members/{_mid}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"groups",
+						"{_id}",
+						"members",
+						"{_mid}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/groups/{_id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/positions/{_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"positions",
+						"{_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company/groups/{_id}/members/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"\",\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/company/groups/{_id}/members/",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"groups",
+						"{_id}",
+						"members",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media/images/profiles/{_pid}/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"\",\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/media/images/profiles/{_pid}/",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"media",
+						"images",
+						"profiles",
+						"{_pid}",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media/images/profiles/{_pid}/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"\",\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/media/images/profiles/{_pid}/",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"media",
+						"images",
+						"profiles",
+						"{_pid}",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
