@@ -1,3 +1,8 @@
 {
-    "service.port": 8089
+    "service.port": 8089,
+    "db.port":3306,
+    "db.host":"localhost",
+    "db.user":"root",
+    "db.user.password":"",
+    "db.name":"mconnect-db"
 }
