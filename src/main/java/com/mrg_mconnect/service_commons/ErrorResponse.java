@@ -1,5 +1,6 @@
 package com.mrg_mconnect.service_commons;
 
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -8,6 +9,16 @@ import io.vertx.core.json.JsonObject;
  */
 
 public class ErrorResponse {
+
+    public interface IStatusCode {
+        public ISetMessage statusCode(int statusCode);
+        
+    }
+
+    public interface IResponse {
+         public IStatusCode response(HttpServerResponse response);
+        
+    }
 
     public interface ISetErrorNo {
         public Ibuilder errorNo(int errorNo);
@@ -23,19 +34,40 @@ public class ErrorResponse {
         public JsonObject build();
     }
 
+    public static IResponse getBuilder(){
+        return new Builder();
+    }
+
     public static class Builder implements
-            ISetMessage, ISetErrorNo, Ibuilder {
+            ISetMessage, ISetErrorNo, Ibuilder, IResponse, IStatusCode {
 
         int errorNo;
         String message;
+        HttpServerResponse response;
+        int statusCode = 400;
 
         @Override
         public JsonObject build() {
-            System.err.println("Test " + this.message + " >" + this.errorNo);
+
+            System.err.println("Error response data: " + this.message + " >" + this.errorNo);
+
+            //error data
             JsonObject result = new JsonObject();
             result.put("message", message);
             result.put("error_no", errorNo);
-            return result;
+
+            //complese response if response is set
+            if(response != null){
+                    response
+                        .setStatusCode(statusCode)
+                        .putHeader("content-type", "application/json")
+                        .end(result.encodePrettily());
+            }else{
+                return result;
+            }
+
+            return null;           
+            
         }
 
         @Override
@@ -47,6 +79,18 @@ public class ErrorResponse {
         @Override
         public ISetErrorNo message(String message) {
             this.message = message;
+            return this;
+        }
+
+        @Override
+        public IStatusCode response(HttpServerResponse response) {
+            this.response = response;
+            return this;
+        }
+
+        @Override
+        public ISetMessage statusCode(int statusCode) {
+            this.statusCode = statusCode;
             return this;
         }
 

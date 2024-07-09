@@ -108,20 +108,32 @@ public class AuthServiceSubRoute extends SubRouter {
                         response.putHeader("content-type", "application/json")
                                 .end(msgResult.getJsonObject("data").encodePrettily());
                     } else {
-                        JsonObject errorRresponseData = new ErrorResponse.Builder().message("Login request failed")
-                                .errorNo(400).build();
-                        response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                        ErrorResponse.getBuilder()
+                        .response(response)
+                        .statusCode(400)
+                        .message("Login request failed")
+                        .errorNo(400)
+                        .build();
                     }
                 } else {
-                    JsonObject errorRresponseData = new ErrorResponse.Builder().message(res.cause().getMessage())
-                            .errorNo(400).build();
-                    response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+
+                    ErrorResponse.getBuilder()
+                        .response(response)
+                        .statusCode(400)
+                        .message(res.cause().getMessage())
+                        .errorNo(400)
+                        .build();
                 }
             });
 
         } catch (Exception e) {
-            JsonObject errorRresponseData = new ErrorResponse.Builder().message(e.getMessage()).errorNo(400).build();
-            response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+            ErrorResponse.getBuilder()
+                        .response(response)
+                        .statusCode(400)
+                        .message(e.getMessage())
+                        .errorNo(400)
+                        .build();
+            
         }
 
     }
