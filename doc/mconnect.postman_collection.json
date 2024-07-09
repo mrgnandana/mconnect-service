@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"mobile_number\": \"+94713056295\",\n    \"device_id\": \"\",\n    \"device_type\":\"\", //mobile, tab, web, desktop\n    \"device_model\":\"\",\n    \"device_name\": \"\",\n    \"device_os\": \"\"\n}",
+					"raw": "{\n    \"emp_id\":\"\",\n    \"mobile_no\": \"+94713056295\",\n    \"device_id\": \"\",\n    \"device_type\":\"\", //mobile, tab, web, desktop\n    \"device_model\":\"\",\n    \"device_name\": \"\",\n    \"device_os\": \"\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -47,10 +47,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{backedURL}}/auth/login-request",
+							"raw": "http://localhost:8089/auth/login-request",
+							"protocol": "http",
 							"host": [
-								"{{backedURL}}"
+								"localhost"
 							],
+							"port": "8089",
 							"path": [
 								"auth",
 								"login-request"
@@ -71,6 +73,47 @@
 					],
 					"cookie": [],
 					"body": ""
+				},
+				{
+					"name": "auth/login-request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"emp_id\":\"\",\n    \"mobile_no\": \"+94713057295\",\n    \"device_id\": \"d1\",\n    \"device_type\":\"\", //mobile, tab, web, desktop\n    \"device_model\":\"\",\n    \"device_name\": \"\",\n    \"device_os\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{backedURL}}/auth/login-request",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"auth",
+								"login-request"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "content-length",
+							"value": "91"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"data\": {\n        \"sid\": \"3d8b7302-1dde-4504-9049-6147fc89282e\"\n    }\n}"
 				}
 			]
 		},
@@ -96,6 +139,73 @@
 					"path": [
 						"auth",
 						"token"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"phone_number\":\"<email address>\", // or \"<phone number>\"\n  \"otp\": \"CODE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8089/auth/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8089",
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n\"access_token\":\"eyJz93a...k4laUWw\",\n\"refresh_token\":\"GEbRxBN...edjnXbL\",\n\"token_type\":\"Bearer\",\n\"expires_in\":86400\n}"
+				}
+			]
+		},
+		{
+			"name": "auth/token-verify",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJiNzBhNzkxMi1lYTg0LTQ2NTgtYTcyNy0yNmYxMWUzYjcxMWYiLCJzdWIiOiJ1MiIsImF1ZCI6WyJ1c2VyIl0sImV4cCI6MTcyMDUwODgwNiwiaWF0IjoxNzIwNTA4NTA2fQ.J4b_0niVug7lTZo2SqvmI3ZbSIiEcWUb2ASBE9JCGfc",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{backedURL}}/auth/token-verify",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"auth",
+						"token-verify"
 					]
 				}
 			},
@@ -183,10 +293,84 @@
 							}
 						},
 						"url": {
-							"raw": "{{backedURL}}/auth/token",
+							"raw": "http://localhost:8089/auth/token",
+							"protocol": "http",
 							"host": [
-								"{{backedURL}}"
+								"localhost"
 							],
+							"port": "8089",
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n\"access_token\":\"eyJz93a...k4laUWw\",\n\"refresh_token\":\"GEbRxBN...edjnXbL\",\n\"token_type\":\"Bearer\",\n\"expires_in\":86400\n}"
+				}
+			]
+		},
+		{
+			"name": "auth/device/security_key/{divice_id}",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"refresh_token\":\"r1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{backedURL}}/auth/device/security_key/{divice_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"auth",
+						"device",
+						"security_key",
+						"{divice_id}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"phone_number\":\"<email address>\", // or \"<phone number>\"\n  \"otp\": \"CODE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8089/auth/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8089",
 							"path": [
 								"auth",
 								"token"
@@ -251,10 +435,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{backedURL}}/company/structure",
+							"raw": "http://localhost:8089/company/structure",
+							"protocol": "http",
 							"host": [
-								"{{backedURL}}"
+								"localhost"
 							],
+							"port": "8089",
 							"path": [
 								"company",
 								"structure"
@@ -300,10 +486,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{backedURL}}/company/structure/list",
+							"raw": "http://localhost:8089/company/structure/list",
+							"protocol": "http",
 							"host": [
-								"{{backedURL}}"
+								"localhost"
 							],
+							"port": "8089",
 							"path": [
 								"company",
 								"structure",
@@ -352,10 +540,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{backedURL}}/company/structure/list",
+							"raw": "http://localhost:8089/company/structure/list",
+							"protocol": "http",
 							"host": [
-								"{{backedURL}}"
+								"localhost"
 							],
+							"port": "8089",
 							"path": [
 								"company",
 								"structure",
@@ -422,10 +612,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{backedURL}}/company/structure",
+							"raw": "http://localhost:8089/company/structure",
+							"protocol": "http",
 							"host": [
-								"{{backedURL}}"
+								"localhost"
 							],
+							"port": "8089",
 							"path": [
 								"company",
 								"structure"
@@ -796,6 +988,25 @@
 			"response": []
 		},
 		{
+			"name": "company/groups/{_id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/groups/{_id}",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"groups",
+						"{_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "company/groups/",
 			"request": {
 				"method": "POST",
@@ -903,25 +1114,6 @@
 			"response": []
 		},
 		{
-			"name": "company/groups/{_id}",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{backedURL}}/company/positions/{_id}",
-					"host": [
-						"{{backedURL}}"
-					],
-					"path": [
-						"company",
-						"positions",
-						"{_id}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "company/groups/{_id}/members/",
 			"request": {
 				"method": "POST",
@@ -1013,6 +1205,35 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "backedURL",
+			"value": "http://localhost:8089",
+			"type": "string"
 		}
 	]
 }

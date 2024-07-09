@@ -1,14 +1,23 @@
 package com.mrg_mconnect.auth;
 
+import java.util.Map;
+
+import com.mrg_mconnect.manager.AuthManager;
 import com.mrg_mconnect.service_commons.ErrorResponse;
 import com.mrg_mconnect.service_commons.SubRouter;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.PubSecKeyOptions;
+import io.vertx.ext.auth.authentication.Credentials;
+import io.vertx.ext.auth.authentication.TokenCredentials;
+import io.vertx.ext.auth.jwt.JWTAuth;
+import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.JWTAuthHandler;
 
 /**
  *
@@ -29,41 +38,70 @@ public class AuthServiceSubRoute extends SubRouter {
         String mountPoint = "/auth";
         subRouter.post(mountPoint + "/token").handler(this::handleToken);
         subRouter.post(mountPoint + "/login-request").handler(this::handleLoginRequest);
+        subRouter.get(mountPoint + "/token-verify").handler(this::handleTokenVerify);
     }
 
     private void handleToken(RoutingContext ctx) {
         HttpServerResponse response = ctx.response();
 
-        JsonObject o = new JsonObject();
-        o.put("code", 1);
-        // o.put("error", ex.getError());
-        // o.put("type", ex.getErrorType());
-        // o.put("description", ex.getErrorMsg());
+        try {
+            // validate session id and otp provided
+            JsonObject requestObj = ctx.body().asJsonObject();
+            // validate mobile_no/emp_id, device id
+            String sessionId = "";
+            if (requestObj.getString("sid") != null) {
+                sessionId = requestObj.getString("sid").trim();
+            }
 
-        JsonObject ret = new JsonObject();
-        ret.put("fault", o);
+            String otp = "";
+            if (requestObj.getString("otp") != null) {
+                otp = requestObj.getString("otp").trim();
+            }
 
-        ctx.response().setStatusCode(400)
-                .putHeader("content-type", "application/json")
-                .end(ret.encodePrettily());
+            if (sessionId.isEmpty() || otp.isEmpty()) {
+                throw new Exception("Invalid request parameters");
+            }
 
-        // JsonObject reqObj = ctx.body().asJsonObject();
-        // JsonObject msg = EventBusMessageUtil.buildMessage("user.create", reqObj);
-        // vertx.eventBus().request(EB_ADDRESS, msg, res -> {
-        // if (res.succeeded()) {
+            // handover to manamger
+            JsonObject reqData = new JsonObject();
+            reqData.put("otp", otp);
+            reqData.put("sid", sessionId);
 
-        // JsonObject msgResult = (JsonObject) res.result().body();
+            JsonObject msg = new JsonObject().put("method", "auth.token").put("data", reqData);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        response.putHeader("content-type", "application/json")
+                                .end(msgResult.getJsonObject("data").encodePrettily());
+                    } else {
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message("Token request failed")
+                                .errorNo(400)
+                                .build();
+                    }
+                } else {
 
-        // if (msgResult.getBoolean("success")) {
-        // response.putHeader("content-type",
-        // "application/json").end(msgResult.getJsonObject("data").encodePrettily());
-        // } else {
-        // ErrorResponse.errorResponse(ctx, msgResult.getJsonObject("fault"), 400);
-        // }
-        // } else {
-        // ErrorResponse.internalError(ctx, res.cause());
-        // }
-        // });
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
+                }
+            });
+
+        } catch (Exception e) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(e.getMessage())
+                    .errorNo(400)
+                    .build();
+        }
+
     }
 
     private void handleLoginRequest(RoutingContext ctx) {
@@ -92,7 +130,7 @@ public class AuthServiceSubRoute extends SubRouter {
                 throw new Exception("Mobile no or emp id is required");
             }
 
-            if(deviceId.isEmpty()){
+            if (deviceId.isEmpty()) {
                 throw new Exception("Invalid device id");
             }
 
@@ -109,31 +147,80 @@ public class AuthServiceSubRoute extends SubRouter {
                                 .end(msgResult.getJsonObject("data").encodePrettily());
                     } else {
                         ErrorResponse.getBuilder()
-                        .response(response)
-                        .statusCode(400)
-                        .message("Login request failed")
-                        .errorNo(400)
-                        .build();
+                                .response(response)
+                                .statusCode(400)
+                                .message("Login request failed")
+                                .errorNo(400)
+                                .build();
                     }
                 } else {
 
                     ErrorResponse.getBuilder()
-                        .response(response)
-                        .statusCode(400)
-                        .message(res.cause().getMessage())
-                        .errorNo(400)
-                        .build();
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
                 }
             });
 
         } catch (Exception e) {
             ErrorResponse.getBuilder()
-                        .response(response)
-                        .statusCode(400)
-                        .message(e.getMessage())
-                        .errorNo(400)
-                        .build();
+                    .response(response)
+                    .statusCode(400)
+                    .message(e.getMessage())
+                    .errorNo(400)
+                    .build();
+
+        }
+
+    }
+
+    private void handleTokenVerify(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            // check header
+            String authToken = ctx.request().getHeader("Authorization");
+
+            if (!(authToken != null && !authToken.isEmpty())) {
+                throw new Exception("Invalid request parameters");
+            }
+
+            // verify token
+            // AuthManager manager = new AuthManager(vertx);
+            // manager.verify(authToken.replace("Bearer", "" ).trim());
+
+            JWTAuth provider = JWTAuth.create(vertx, new JWTAuthOptions()
+                    .addPubSecKey(new PubSecKeyOptions()
+                            .setAlgorithm("HS256")
+                            .setBuffer("mconnect-token-secret-b70a7912-ea84-4658-a727-26f11e3b711f")));
+            provider.authenticate(new TokenCredentials(authToken.replace("Bearer", "" ).trim()) , res ->{
+                if(res.succeeded()) {
+                    response.putHeader("content-type", "application/json")
+                    .end(new JsonObject().put("is_valid", true).encodePrettily());
+                }else{
+                    ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(401)
+                    .message("Invalid token")
+                    .errorNo(401)
+                    .build();
+                }
+            });
+
+            // JWTAuthHandler.create(provider).handle(ctx);
+
             
+
+        } catch (Exception e) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(e.getMessage())
+                    .errorNo(400)
+                    .build();
+
         }
 
     }

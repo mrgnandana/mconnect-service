@@ -28,7 +28,7 @@ public class AuthVerticle extends AbstractVerticle {
     @Override
     public void start(Promise<Void> startPromise) throws Exception {
         System.out.println("auth verticle starting");
-        authManager = new AuthManager();
+        authManager = new AuthManager(vertx);
         vertx.eventBus().consumer(EVENT_BUS_ADDRESS, (message) -> {
             try {
                 JsonObject req = (JsonObject) message.body();
@@ -39,6 +39,10 @@ public class AuthVerticle extends AbstractVerticle {
                 switch (method) {
                     case "auth.login_request":
                         loginRequest(message, req.getJsonObject("data"));
+                        break;
+
+                    case "auth.token":
+                        token(message, req.getJsonObject("data"));
                         break;
 
                     default:
@@ -56,11 +60,23 @@ public class AuthVerticle extends AbstractVerticle {
         //MessageHelper.errorReply(message, "Test error message", 2);
         System.out.println("Login request auth verticle");
         authManager.requestLogin(data.getString("mobile_no"), data.getString("emp_id"), "", data.getString("device_id")).andThen(res -> {
-            if (res.succeeded()) {
-                JsonObject resx = new JsonObject()
-                        .put("success", true).put("data", res.result());
 
-                MessageHelper.successReply(message, resx);
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
+            }
+
+        });
+    }
+
+    private void token(Message<Object> message, JsonObject data) {
+        //MessageHelper.errorReply(message, "Test error message", 2);
+        System.out.println("Token auth verticle");
+        authManager.token(data.getString("sid"), data.getString("otp")).andThen(res -> {
+
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
             } else {
                 MessageHelper.errorReply(message, res.cause().getMessage(), 2);
             }
