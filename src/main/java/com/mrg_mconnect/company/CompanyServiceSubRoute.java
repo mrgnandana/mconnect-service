@@ -1,5 +1,6 @@
 package com.mrg_mconnect.company;
 
+import com.mrg_mconnect.manager.AuthManager;
 import com.mrg_mconnect.manager.CompanyManager;
 import com.mrg_mconnect.service_commons.ErrorResponse;
 import com.mrg_mconnect.service_commons.SubRouter;
@@ -11,6 +12,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.JWTAuthHandler;
 
 public class CompanyServiceSubRoute extends SubRouter {
 
@@ -25,6 +27,9 @@ public class CompanyServiceSubRoute extends SubRouter {
         this.subRouter.route().handler(BodyHandler.create());
 
         String mountPoint = "/company";
+        //athenticate
+        //subRouter.route(mountPoint + "/*").handler(JWTAuthHandler.create(new AuthManager(vertx).getAuthProvider()));
+
         // contact
         subRouter.post(mountPoint + "/contacts/list").handler(this::handleContactList);
 

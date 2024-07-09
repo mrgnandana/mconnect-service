@@ -4,19 +4,15 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.mrg_mconnect.dataaccess.DbClient;
-import com.mrg_mconnect.service_commons.ErrorResponse;
-
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.PubSecKeyOptions;
-import io.vertx.ext.auth.authentication.Credentials;
 import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
-import io.vertx.ext.web.handler.JWTAuthHandler;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlConnection;
 import io.vertx.sqlclient.Transaction;
@@ -30,10 +26,21 @@ public class AuthManager {
     DbClient dbClient;
     String SECRET = "mconnect-token-secret-b70a7912-ea84-4658-a727-26f11e3b711f";
     Vertx vertx;
+    JWTAuth jwtAuth;
 
     public AuthManager(Vertx v) {
         dbClient = DbClient.getInstance();
         this.vertx = v;
+
+        jwtAuth = JWTAuth.create(vertx, new JWTAuthOptions()
+                .addPubSecKey(new PubSecKeyOptions()
+                        .setAlgorithm("HS256")
+                        .setBuffer(SECRET)));
+
+    }
+
+    public JWTAuth getAuthProvider() {
+        return this.jwtAuth;
     }
 
     public static String getRandomNumberString() {
@@ -217,7 +224,8 @@ public class AuthManager {
                         Transaction tx = ar0.result();
                         // Various statements
                         conn
-                                .query("SELECT * FROM vath_plotp_outq where session_id = '" + sessionId + "' and otp = '"+ otp +"'")
+                                .query("SELECT * FROM vath_plotp_outq where session_id = '" + sessionId
+                                        + "' and otp = '" + otp + "'")
                                 .execute(ar1 -> {
                                     if (ar1.succeeded()) {
                                         // check record found
@@ -227,35 +235,34 @@ public class AuthManager {
                                             System.out.println("Session record found, create tokens");
 
                                             String userId = "";
-                                            //String mNo = "";
+                                            // String mNo = "";
                                             for (Row row : ar1.result()) {
                                                 userId = row.getString("user_id");
                                                 break;
                                             }
 
-                                            JWTAuth provider = JWTAuth.create(vertx, new JWTAuthOptions()
-                                            .addPubSecKey(new PubSecKeyOptions()
-                                                .setAlgorithm("HS256")
-                                                .setBuffer(SECRET)));
+                                            JWTAuth provider = getAuthProvider();
 
                                             JsonArray audArray = new JsonArray();
                                             audArray.add("user");
 
-                                            long createdAt = System.currentTimeMillis()/1000 + 300;
+                                            long createdAt = System.currentTimeMillis() / 1000 + 300;
 
-                                            String refreshToken = provider.generateToken(new JsonObject().put("sid", sessionId).put("sub", userId));
-                                            String accessToken = provider.generateToken(new JsonObject().put("sid", sessionId).put("sub", userId).put("aud", audArray).put("exp", createdAt));
+                                            String refreshToken = provider.generateToken(
+                                                    new JsonObject().put("sid", sessionId).put("sub", userId));
+                                            String accessToken = provider.generateToken(
+                                                    new JsonObject().put("sid", sessionId).put("sub", userId)
+                                                            .put("aud", audArray).put("exp", createdAt));
 
                                             JsonObject data = new JsonObject();
                                             data.put("access_token", accessToken);
                                             data.put("refresh_token", refreshToken);
-                                            
-
 
                                             // update session record start
-                                                            
+
                                             conn
-                                                    .query("update ath_plotp_login_session set otp_checked = 1 where session_id ='"+ sessionId +"'")
+                                                    .query("update ath_plotp_login_session set otp_checked = 1 where session_id ='"
+                                                            + sessionId + "'")
                                                     .execute(ar2 -> {
                                                         if (ar2.succeeded()) {
                                                             // Commit the transaction
@@ -263,7 +270,7 @@ public class AuthManager {
                                                                 if (ar4.succeeded()) {
                                                                     System.out.println(
                                                                             "Transaction succeeded");
-                                                                            result.complete(data);
+                                                                    result.complete(data);
 
                                                                 } else {
                                                                     System.out.println(
@@ -305,7 +312,7 @@ public class AuthManager {
                         result.fail("Db transaction failed");
                     }
                 });
-            }else{
+            } else {
                 System.out.println("get connection failed");
                 result.fail("get connection failed");
             }
@@ -314,21 +321,18 @@ public class AuthManager {
         return result.future();
     }
 
-    public Future<JsonObject> verify(String token){
+    public Future<JsonObject> verify(String token) {
         Promise<JsonObject> result = Promise.promise();
 
-        JWTAuth provider = JWTAuth.create(vertx, new JWTAuthOptions()
-                                            .addPubSecKey(new PubSecKeyOptions()
-                                                .setAlgorithm("HS256")
-                                                .setBuffer(SECRET)));
+        JWTAuth provider = getAuthProvider();
 
-        provider.authenticate(new TokenCredentials(token.replace("Bearer", "" ).trim()) , res ->{
-                if(res.succeeded()) {
-                    result.complete(new JsonObject().put("is_valid", true));
-                }else{
-                    result.fail("Invalid token");
-                }
-            });
+        provider.authenticate(new TokenCredentials(token.replace("Bearer", "").trim()), res -> {
+            if (res.succeeded()) {
+                result.complete(new JsonObject().put("is_valid", true));
+            } else {
+                result.fail("Invalid token");
+            }
+        });
 
         return result.future();
     }
