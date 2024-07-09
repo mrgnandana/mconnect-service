@@ -2,6 +2,8 @@ package com.mrg_mconnect.service;
 
 import com.mrg_mconnect.auth.AuthServiceSubRoute;
 import com.mrg_mconnect.company.CompanyServiceSubRoute;
+import com.mrg_mconnect.media.MediaServiceSubRoute;
+
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -62,6 +64,10 @@ public class RESTMainVerticle extends AbstractVerticle {
         SubRouter companyService = new CompanyServiceSubRoute(vertx, router);
         companyService.setup();
         router.route().subRouter(companyService.getSubRouter());
+
+        SubRouter mediaService = new MediaServiceSubRoute(vertx, router);
+        mediaService.setup();
+        router.route().subRouter(mediaService.getSubRouter());
 
         // String discoveryAnounceAddress = config().getString("discovery.address",
         // "base-services");

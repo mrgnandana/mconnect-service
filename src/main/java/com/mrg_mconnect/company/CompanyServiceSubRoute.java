@@ -31,8 +31,8 @@ public class CompanyServiceSubRoute extends SubRouter {
         // structure
         subRouter.get(mountPoint + "/structure/list").handler(this::handleCompanyStructureList);
 
-         // position
-         subRouter.get(mountPoint + "/positions/list").handler(this::handleCompanyPositionList);
+        // position
+        subRouter.get(mountPoint + "/positions/list").handler(this::handleCompanyPositionList);
     }
 
     private void handleContactList(RoutingContext ctx) {
@@ -43,6 +43,10 @@ public class CompanyServiceSubRoute extends SubRouter {
             String userId = "";
             if (requestObj.getString("user_id") != null) {
                 userId = requestObj.getString("user_id").trim();
+            }
+
+            if (userId.isEmpty()) {
+                throw new Exception("User id is required");
             }
 
             int page = 0;
@@ -72,21 +76,29 @@ public class CompanyServiceSubRoute extends SubRouter {
                         response.putHeader("content-type", "application/json")
                                 .end(msgResult.getJsonArray("data").encodePrettily());
                     } else {
-
-                        JsonObject errorRresponseData = new ErrorResponse.Builder()
-                                .message(msgResult.getString("message"))
-                                .errorNo(400).build();
-                        response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message(res.cause().getMessage())
+                                .errorNo(400)
+                                .build();
                     }
                 } else {
-                    JsonObject errorRresponseData = new ErrorResponse.Builder().message(res.cause().getMessage())
-                            .errorNo(400).build();
-                    response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
                 }
             });
-        } catch (Exception e) {
-            JsonObject errorRresponseData = new ErrorResponse.Builder().message(e.getMessage()).errorNo(400).build();
-            response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
         }
 
     }
@@ -104,20 +116,29 @@ public class CompanyServiceSubRoute extends SubRouter {
                         response.putHeader("content-type", "application/json")
                                 .end(msgResult.getJsonArray("data").encodePrettily());
                     } else {
-                        JsonObject errorRresponseData = new ErrorResponse.Builder()
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
                                 .message(res.cause().getMessage())
-                                .errorNo(400).build();
-                        response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                                .errorNo(400)
+                                .build();
                     }
                 } else {
-                    JsonObject errorRresponseData = new ErrorResponse.Builder().message(res.cause().getMessage())
-                            .errorNo(400).build();
-                    response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
                 }
             });
-        } catch (Exception e) {
-            JsonObject errorRresponseData = new ErrorResponse.Builder().message(e.getMessage()).errorNo(400).build();
-            response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
         }
 
     }
@@ -135,20 +156,29 @@ public class CompanyServiceSubRoute extends SubRouter {
                         response.putHeader("content-type", "application/json")
                                 .end(msgResult.getJsonArray("data").encodePrettily());
                     } else {
-                        JsonObject errorRresponseData = new ErrorResponse.Builder()
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
                                 .message(res.cause().getMessage())
-                                .errorNo(400).build();
-                        response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                                .errorNo(400)
+                                .build();
                     }
                 } else {
-                    JsonObject errorRresponseData = new ErrorResponse.Builder().message(res.cause().getMessage())
-                            .errorNo(400).build();
-                    response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
                 }
             });
-        } catch (Exception e) {
-            JsonObject errorRresponseData = new ErrorResponse.Builder().message(e.getMessage()).errorNo(400).build();
-            response.setStatusCode(400).end(errorRresponseData.encodePrettily());
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
         }
 
     }

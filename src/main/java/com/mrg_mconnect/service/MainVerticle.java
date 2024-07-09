@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.print.attribute.standard.Media;
+
 // import io.vertx.core.logging.Logger;
 // import io.vertx.core.logging.LoggerFactory;
 import org.slf4j.Logger;
@@ -20,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import com.mrg_mconnect.dataaccess.DbClient;
 import com.mrg_mconnect.dataaccess.DbConfig;
+import com.mrg_mconnect.media.MediaVerticle;
+import com.mrg_mconnect.service_commons.MediaUtil;
 
 /**
  *
@@ -57,6 +61,9 @@ public class MainVerticle extends AbstractVerticle {
             }
 
         });
+
+        MediaUtil.MEDIA_PATH = config().getString("media_base_path", "D://spk//mconnect//");
+        
 
         // vertx.createHttpServer().requestHandler(req -> {
         //   req.response()
@@ -103,6 +110,7 @@ public class MainVerticle extends AbstractVerticle {
         list.add(deployVerticle(vertx, options, RESTMainVerticle.class.getName()));
         list.add(deployVerticle(vertx, options, CompanyVerticle.class.getName()));
         list.add(deployVerticle(vertx, options, AuthVerticle.class.getName()));
+        list.add(deployVerticle(vertx, options, MediaVerticle.class.getName()));
 
         Future.all(list).onComplete(res -> {
             if (res.succeeded()) {
