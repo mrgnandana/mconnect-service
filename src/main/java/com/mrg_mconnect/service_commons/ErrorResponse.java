@@ -2,6 +2,11 @@ package com.mrg_mconnect.service_commons;
 
 import io.vertx.core.json.JsonObject;
 
+/**
+ *
+ * @author Nandana
+ */
+
 public class ErrorResponse {
 
     public interface ISetErrorNo {

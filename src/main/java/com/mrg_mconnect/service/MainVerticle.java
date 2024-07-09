@@ -21,6 +21,11 @@ import org.slf4j.LoggerFactory;
 import com.mrg_mconnect.dataaccess.DbClient;
 import com.mrg_mconnect.dataaccess.DbConfig;
 
+/**
+ *
+ * @author Nandana
+ */
+
 public class MainVerticle extends AbstractVerticle {
 
     @Override

@@ -12,6 +12,11 @@ import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlConnection;
 import io.vertx.sqlclient.Transaction;
 
+/**
+ *
+ * @author Nandana
+ */
+
 public class AuthManager {
     DbClient dbClient;
 
@@ -110,7 +115,7 @@ public class AuthManager {
                                                                                     System.out.println(
                                                                                             "Transaction succeeded");
                                                                                     JsonObject r = new JsonObject();
-                                                                                    r.put("session_id", sessionId);
+                                                                                    r.put("sid", sessionId);
                                                                                     result.complete(r);
 
                                                                                 } else {

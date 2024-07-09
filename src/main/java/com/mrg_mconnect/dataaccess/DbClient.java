@@ -6,6 +6,11 @@ import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.PoolOptions;
 
+/**
+ *
+ * @author Nandana
+ */
+
 public class DbClient {
 
     static DbClient instance = new DbClient();

@@ -3,6 +3,12 @@ package com.mrg_mconnect.service_commons;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 
+
+/**
+ *
+ * @author Nandana
+ */
+
 public class MessageHelper {
     public static void errorReply(Message<Object> msgObject, String errorDescription, int errorNo) {
         JsonObject exReply = new JsonObject();
@@ -12,7 +18,7 @@ public class MessageHelper {
         msgObject.reply(exReply);
     }
 
-    public static void successReply(Message<Object> msgObject, Object data) {
+    public static void successReply(Message<Object> msgObject, JsonObject data) {
         JsonObject exReply = new JsonObject();
         exReply.put("success", true);
         exReply.put("data", data);

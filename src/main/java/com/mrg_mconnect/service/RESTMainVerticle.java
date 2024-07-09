@@ -23,6 +23,11 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 
+/**
+ *
+ * @author Nandana
+ */
+
 public class RESTMainVerticle extends AbstractVerticle {
 
     private final Logger logger = LoggerFactory.getLogger(RESTMainVerticle.class);

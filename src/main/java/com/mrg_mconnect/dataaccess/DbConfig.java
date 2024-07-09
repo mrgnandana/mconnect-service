@@ -1,5 +1,9 @@
 package com.mrg_mconnect.dataaccess;
 
+/**
+ *
+ * @author Nandana
+ */
 public class DbConfig {
 
     String dbName;

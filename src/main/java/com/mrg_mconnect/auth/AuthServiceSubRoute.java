@@ -10,6 +10,10 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
+/**
+ *
+ * @author Nandana
+ */
 public class AuthServiceSubRoute extends SubRouter {
 
     final String EVENT_BUS_ADDRESS = "com.mconnect.auth";
