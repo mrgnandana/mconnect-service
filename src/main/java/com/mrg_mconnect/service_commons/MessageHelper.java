@@ -18,7 +18,7 @@ public class MessageHelper {
         msgObject.reply(exReply);
     }
 
-    public static void successReply(Message<Object> msgObject, JsonObject data) {
+    public static void successReply(Message<Object> msgObject, Object data) {
         JsonObject exReply = new JsonObject();
         exReply.put("success", true);
         exReply.put("data", data);
