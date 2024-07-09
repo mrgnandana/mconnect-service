@@ -188,17 +188,11 @@ public class AuthServiceSubRoute extends SubRouter {
             }
 
             // verify token
-            // AuthManager manager = new AuthManager(vertx);
-            // manager.verify(authToken.replace("Bearer", "" ).trim());
-
-            JWTAuth provider = JWTAuth.create(vertx, new JWTAuthOptions()
-                    .addPubSecKey(new PubSecKeyOptions()
-                            .setAlgorithm("HS256")
-                            .setBuffer("mconnect-token-secret-b70a7912-ea84-4658-a727-26f11e3b711f")));
-            provider.authenticate(new TokenCredentials(authToken.replace("Bearer", "" ).trim()) , res ->{
+            AuthManager manager = new AuthManager(vertx);
+            manager.verify(authToken.replace("Bearer", "" ).trim()).andThen(res ->{
                 if(res.succeeded()) {
                     response.putHeader("content-type", "application/json")
-                    .end(new JsonObject().put("is_valid", true).encodePrettily());
+                    .end(res.result().encodePrettily());
                 }else{
                     ErrorResponse.getBuilder()
                     .response(response)
@@ -209,7 +203,24 @@ public class AuthServiceSubRoute extends SubRouter {
                 }
             });
 
-            // JWTAuthHandler.create(provider).handle(ctx);
+            // JWTAuth provider = JWTAuth.create(vertx, new JWTAuthOptions()
+            //         .addPubSecKey(new PubSecKeyOptions()
+            //                 .setAlgorithm("HS256")
+            //                 .setBuffer("mconnect-token-secret-b70a7912-ea84-4658-a727-26f11e3b711f")));
+            // provider.authenticate(new TokenCredentials(authToken.replace("Bearer", "" ).trim()) , res ->{
+            //     if(res.succeeded()) {
+            //         response.putHeader("content-type", "application/json")
+            //         .end(new JsonObject().put("is_valid", true).encodePrettily());
+            //     }else{
+            //         ErrorResponse.getBuilder()
+            //         .response(response)
+            //         .statusCode(401)
+            //         .message("Invalid token")
+            //         .errorNo(401)
+            //         .build();
+            //     }
+            // });
+
 
             
 

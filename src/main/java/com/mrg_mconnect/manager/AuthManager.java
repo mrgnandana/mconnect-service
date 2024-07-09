@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.mrg_mconnect.dataaccess.DbClient;
+import com.mrg_mconnect.service_commons.ErrorResponse;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -12,6 +13,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.PubSecKeyOptions;
 import io.vertx.ext.auth.authentication.Credentials;
+import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.handler.JWTAuthHandler;
@@ -315,18 +317,18 @@ public class AuthManager {
     public Future<JsonObject> verify(String token){
         Promise<JsonObject> result = Promise.promise();
 
-        // JWTAuth provider = JWTAuth.create(vertx, new JWTAuthOptions()
-        //                                     .addPubSecKey(new PubSecKeyOptions()
-        //                                         .setAlgorithm("HS256")
-        //                                         .setBuffer(SECRET)));
+        JWTAuth provider = JWTAuth.create(vertx, new JWTAuthOptions()
+                                            .addPubSecKey(new PubSecKeyOptions()
+                                                .setAlgorithm("HS256")
+                                                .setBuffer(SECRET)));
 
-        // JWTAuthHandler.create(provider).handle(null);
-
-        // provider.authenticate(new JsonObject().put("token", token))
-        // .onSuccess(user -> System.out.println("User: " + user.principal()))
-        // .onFailure(err -> {
-        //   // Failed!
-        // });
+        provider.authenticate(new TokenCredentials(token.replace("Bearer", "" ).trim()) , res ->{
+                if(res.succeeded()) {
+                    result.complete(new JsonObject().put("is_valid", true));
+                }else{
+                    result.fail("Invalid token");
+                }
+            });
 
         return result.future();
     }
