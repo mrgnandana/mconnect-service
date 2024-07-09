@@ -39,48 +39,6 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"mobile_number\": \"+94713056295\",\n    \"client_id\": \"{yourClientID}\",\n    \"client_secret\": \"{yourClientSecret}\" // For Regular Web Applications\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8089/auth/login-request",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8089",
-							"path": [
-								"auth",
-								"login-request"
-							]
-						}
-					},
-					"status": "OK",
-					"code": 204,
-					"_postman_previewlanguage": "json",
-					"header": [
-						{
-							"key": "Content-Type",
-							"value": "application/json",
-							"name": "Content-Type",
-							"description": "",
-							"type": "text"
-						}
-					],
-					"cookie": [],
-					"body": ""
-				},
-				{
-					"name": "auth/login-request",
-					"originalRequest": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
 							"raw": "{\n    \"emp_id\":\"\",\n    \"mobile_no\": \"+94713057295\",\n    \"device_id\": \"d1\",\n    \"device_type\":\"\", //mobile, tab, web, desktop\n    \"device_model\":\"\",\n    \"device_name\": \"\",\n    \"device_os\": \"\"\n}",
 							"options": {
 								"raw": {
@@ -109,11 +67,52 @@
 						},
 						{
 							"key": "content-length",
-							"value": "91"
+							"value": "52"
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"success\": true,\n    \"data\": {\n        \"sid\": \"3d8b7302-1dde-4504-9049-6147fc89282e\"\n    }\n}"
+					"body": "{\n    \"sid\": \"6faff33b-d50e-44f8-b73c-3798ef8bf27a\"\n}"
+				},
+				{
+					"name": "failed",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"emp_id\":\"\",\n    \"mobile_no\": \"+947130572951\",\n    \"device_id\": \"d1\",\n    \"device_type\":\"\", //mobile, tab, web, desktop\n    \"device_model\":\"\",\n    \"device_name\": \"\",\n    \"device_os\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{backedURL}}/auth/login-request",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"auth",
+								"login-request"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "content-length",
+							"value": "60"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Login request failed\",\n    \"error_no\": 400\n}"
 				}
 			]
 		},
@@ -124,7 +123,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"sid\":\"s1\",\n  \"phone_number\":\"<email address>\", // or \"<phone number>\"\n  \"otp\": \"CODE\"\n}",
+					"raw": "{// only for web apps, native apps don’t have a client secret\n  \"sid\":\"351dc831-1f52-4051-9d0f-54e7a2d33b39\",\n  \"otp\": \"676554\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -150,74 +149,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"phone_number\":\"<email address>\", // or \"<phone number>\"\n  \"otp\": \"CODE\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8089/auth/token",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8089",
-							"path": [
-								"auth",
-								"token"
-							]
-						}
-					},
-					"status": "OK",
-					"code": 200,
-					"_postman_previewlanguage": "json",
-					"header": [
-						{
-							"key": "Content-Type",
-							"value": "application/json",
-							"name": "Content-Type",
-							"description": "",
-							"type": "text"
-						}
-					],
-					"cookie": [],
-					"body": "{\n\"access_token\":\"eyJz93a...k4laUWw\",\n\"refresh_token\":\"GEbRxBN...edjnXbL\",\n\"token_type\":\"Bearer\",\n\"expires_in\":86400\n}"
-				}
-			]
-		},
-		{
-			"name": "auth/token-verify",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJiNzBhNzkxMi1lYTg0LTQ2NTgtYTcyNy0yNmYxMWUzYjcxMWYiLCJzdWIiOiJ1MiIsImF1ZCI6WyJ1c2VyIl0sImV4cCI6MTcyMDUwODgwNiwiaWF0IjoxNzIwNTA4NTA2fQ.J4b_0niVug7lTZo2SqvmI3ZbSIiEcWUb2ASBE9JCGfc",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{backedURL}}/auth/token-verify",
-					"host": [
-						"{{backedURL}}"
-					],
-					"path": [
-						"auth",
-						"token-verify"
-					]
-				}
-			},
-			"response": [
-				{
-					"name": "success",
-					"originalRequest": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"phone_number\":\"<email address>\", // or \"<phone number>\"\n  \"otp\": \"CODE\"\n}",
+							"raw": "{// only for web apps, native apps don’t have a client secret\n  \"sid\":\"351dc831-1f52-4051-9d0f-54e7a2d33b39\",\n  \"otp\": \"676554\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -240,15 +172,158 @@
 					"_postman_previewlanguage": "json",
 					"header": [
 						{
-							"key": "Content-Type",
-							"value": "application/json",
-							"name": "Content-Type",
-							"description": "",
-							"type": "text"
+							"key": "content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "content-length",
+							"value": "452"
 						}
 					],
 					"cookie": [],
-					"body": "{\n\"access_token\":\"eyJz93a...k4laUWw\",\n\"refresh_token\":\"GEbRxBN...edjnXbL\",\n\"token_type\":\"Bearer\",\n\"expires_in\":86400\n}"
+					"body": "{\n    \"access_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiIzNTFkYzgzMS0xZjUyLTQwNTEtOWQwZi01NGU3YTJkMzNiMzkiLCJzdWIiOiJ1MiIsImF1ZCI6WyJ1c2VyIl0sImV4cCI6MTcyMDUxMjI5MywiaWF0IjoxNzIwNTExOTkzfQ.BQ-7Dqu19uUCep91YrQZeaz_USvexS9JdLvCUoTLaDA\",\n    \"refresh_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiIzNTFkYzgzMS0xZjUyLTQwNTEtOWQwZi01NGU3YTJkMzNiMzkiLCJzdWIiOiJ1MiIsImlhdCI6MTcyMDUxMTk5M30.l6ftui0FoEteD_pSXGoy1NA7M2ewyOH9KaS1LV7HisY\"\n}"
+				},
+				{
+					"name": "failed",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{// only for web apps, native apps don’t have a client secret\n  \"sid\":\"351dc831-1f52-4051-9d0f-54e7a2d33b39\",\n  \"otp\": \"676554z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{backedURL}}/auth/token",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "content-length",
+							"value": "60"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Token request failed\",\n    \"error_no\": 400\n}"
+				}
+			]
+		},
+		{
+			"name": "auth/token-verify",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiIzNTFkYzgzMS0xZjUyLTQwNTEtOWQwZi01NGU3YTJkMzNiMzkiLCJzdWIiOiJ1MiIsImF1ZCI6WyJ1c2VyIl0sImV4cCI6MTcyMDUxMjI5MywiaWF0IjoxNzIwNTExOTkzfQ.BQ-7Dqu19uUCep91YrQZeaz_USvexS9JdLvCUoTLaDA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{backedURL}}/auth/token-verify",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"auth",
+						"token-verify"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiIzNTFkYzgzMS0xZjUyLTQwNTEtOWQwZi01NGU3YTJkMzNiMzkiLCJzdWIiOiJ1MiIsImF1ZCI6WyJ1c2VyIl0sImV4cCI6MTcyMDUxMjI5MywiaWF0IjoxNzIwNTExOTkzfQ.BQ-7Dqu19uUCep91YrQZeaz_USvexS9JdLvCUoTLaDA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{backedURL}}/auth/token-verify",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"auth",
+								"token-verify"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "content-length",
+							"value": "23"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"is_valid\": true\n}"
+				},
+				{
+					"name": "failed",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiIzNTFkYzgzMS0xZjUyLTQwNTEtOWQwZi01NGU3YTJkMzNiMzkiLCJzdWIiOiJ1MiIsImF1ZCI6WyJ1c2VyIl0sImV4cCI6MTcyMDUxMTQ2MSwiaWF0IjoxNzIwNTExMTYxfQ.Usy4g_uzpJifEMONpoMi_Z9cYA2mgT_ueGtnALaOiVw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{backedURL}}/auth/token-verify",
+							"host": [
+								"{{backedURL}}"
+							],
+							"path": [
+								"auth",
+								"token-verify"
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "content-length",
+							"value": "53"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Invalid token\",\n    \"error_no\": 401\n}"
 				}
 			]
 		},
