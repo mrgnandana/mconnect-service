@@ -336,4 +336,35 @@ public class AuthManager {
 
         return result.future();
     }
+
+    public Future<JsonObject> refresh(String token) {
+        Promise<JsonObject> result = Promise.promise();
+
+        JWTAuth provider = getAuthProvider();
+
+        provider.authenticate(new TokenCredentials(token.replace("Bearer", "").trim()), res -> {
+            if (res.succeeded()) {
+                // create new access token
+                // update sesstion data
+                String userId = res.result().subject();
+                String sessionId = res.result().attributes().getJsonObject("accessToken").getString("sid");
+                System.out.println(res.result().attributes().getJsonObject("accessToken").getString("sid"));
+
+                JsonArray audArray = new JsonArray();
+                audArray.add("user");
+
+                long createdAt = System.currentTimeMillis() / 1000 + 300;
+
+                String accessToken = provider.generateToken(
+                        new JsonObject().put("sid", sessionId).put("sub", userId)
+                                .put("aud", audArray).put("exp", createdAt));
+
+                result.complete(new JsonObject().put("access_token", accessToken));
+            } else {
+                result.fail("Invalid token");
+            }
+        });
+
+        return result.future();
+    }
 }

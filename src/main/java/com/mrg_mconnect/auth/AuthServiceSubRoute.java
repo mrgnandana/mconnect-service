@@ -39,6 +39,7 @@ public class AuthServiceSubRoute extends SubRouter {
         subRouter.post(mountPoint + "/token").handler(this::handleToken);
         subRouter.post(mountPoint + "/login-request").handler(this::handleLoginRequest);
         subRouter.get(mountPoint + "/token-verify").handler(this::handleTokenVerify);
+        subRouter.post(mountPoint + "/refresh").handler(this::handleRefresh);
     }
 
     private void handleToken(RoutingContext ctx) {
@@ -176,6 +177,46 @@ public class AuthServiceSubRoute extends SubRouter {
 
     }
 
+    private void handleRefresh(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            // check refresh token
+            JsonObject requestObj = ctx.body().asJsonObject();
+            String authToken = requestObj.getString("refresh_token");
+
+            if (!(authToken != null && !authToken.isEmpty())) {
+                throw new Exception("Invalid request parameters");
+            }
+
+            // verify token
+            AuthManager manager = new AuthManager(vertx);
+            manager.refresh(authToken.replace("Bearer", "" ).trim()).andThen(res ->{
+                if(res.succeeded()) {
+                    response.putHeader("content-type", "application/json")
+                    .end(res.result().encodePrettily());
+                }else{
+                    ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(401)
+                    .message("Invalid token")
+                    .errorNo(401)
+                    .build();
+                }
+            });
+
+        } catch (Exception e) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(e.getMessage())
+                    .errorNo(400)
+                    .build();
+
+        }
+
+    }
+
     private void handleTokenVerify(RoutingContext ctx) {
         HttpServerResponse response = ctx.response();
 
@@ -202,27 +243,6 @@ public class AuthServiceSubRoute extends SubRouter {
                     .build();
                 }
             });
-
-            // JWTAuth provider = JWTAuth.create(vertx, new JWTAuthOptions()
-            //         .addPubSecKey(new PubSecKeyOptions()
-            //                 .setAlgorithm("HS256")
-            //                 .setBuffer("mconnect-token-secret-b70a7912-ea84-4658-a727-26f11e3b711f")));
-            // provider.authenticate(new TokenCredentials(authToken.replace("Bearer", "" ).trim()) , res ->{
-            //     if(res.succeeded()) {
-            //         response.putHeader("content-type", "application/json")
-            //         .end(new JsonObject().put("is_valid", true).encodePrettily());
-            //     }else{
-            //         ErrorResponse.getBuilder()
-            //         .response(response)
-            //         .statusCode(401)
-            //         .message("Invalid token")
-            //         .errorNo(401)
-            //         .build();
-            //     }
-            // });
-
-
-            
 
         } catch (Exception e) {
             ErrorResponse.getBuilder()
