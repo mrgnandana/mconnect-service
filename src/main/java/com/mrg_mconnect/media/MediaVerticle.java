@@ -44,6 +44,14 @@ public class MediaVerticle extends AbstractVerticle {
                         getProfileImage(message, req.getJsonObject("data"));
                         break;
 
+                    case "media.upload_company_icon":
+                        uploadCompanyIcon(message, req.getJsonObject("data"));
+                        break;
+
+                    case "media.get_company_icon":
+                        getCompanyIcon(message, req.getJsonObject("data"));
+                        break;
+
                     default:
                         throw new Exception("Invalid option");
                 }
@@ -53,6 +61,28 @@ public class MediaVerticle extends AbstractVerticle {
             }
         });
         startPromise.complete();
+    }
+
+    private void uploadCompanyIcon(Message<Object> message, JsonObject data) {
+
+        mediaManager.uploadCompanyIcon(data.getString("company_id"), data.getString("uploaded_file_name"), data.getString("content_type")).andThen(res -> {
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
+            }
+        });
+    }
+
+    private void getCompanyIcon(Message<Object> message, JsonObject data) {
+
+        mediaManager.getCompanyIcon(data.getString("company_id")).andThen(res -> {
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
+            }
+        });
     }
 
     private void uploadProfileImage(Message<Object> message, JsonObject data) {

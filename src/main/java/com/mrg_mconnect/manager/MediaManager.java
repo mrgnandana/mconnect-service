@@ -177,4 +177,152 @@ public class MediaManager {
         return response.future();
     }
 
+    public Future<JsonObject> uploadCompanyIcon(String companyId, String uploadedFileName, String contentType) {
+        Promise<JsonObject> response = Promise.promise();
+        try {
+            dbClient.getPool().getConnection(con -> {
+                if (con.succeeded()) {
+                    SqlConnection conn = con.result();
+                    isCompanyExists(conn, companyId).andThen(company -> {
+                        if (company.succeeded()) {
+                            String imageLocation = "media/company_icon/" + companyId + "." + contentType.replace("image/", "");
+                            if (company.result()) {
+                                try {
+
+                                    MediaUtil.fileCopy(uploadedFileName, MediaUtil.MEDIA_PATH + imageLocation);
+                                    conn.query(
+                                            "update com_company set icon_url = '" + imageLocation + "' where id = '" + companyId + "'")
+                                            .execute(ar1 -> {
+                                                if (ar1.succeeded()) {
+                                                    JsonObject result = new JsonObject();
+                                                    result.put("company_id", companyId);
+                                                    result.put("icon_url", imageLocation);
+                                                    conn.close();
+                                                    response.complete(result);
+                                                } else {
+                                                    conn.close();
+                                                    response.fail("Company icon update failed");
+                                                }
+
+                                            });
+
+                                } catch (Exception ex) {
+                                    conn.close();
+                                    response.fail("Image file save failed");
+                                }
+
+                            } else {
+                                try {
+                                    MediaUtil.fileCopy(uploadedFileName, MediaUtil.MEDIA_PATH + imageLocation);
+                                    conn.query(
+                                            "insert into com_company(id, company_name,icon_url) values ('" + companyId + "','','" + imageLocation + "')")
+                                            .execute(ar1 -> {
+                                                if (ar1.succeeded()) {
+                                                    JsonObject result = new JsonObject();
+                                                    result.put("company_id", companyId);
+                                                    result.put("company_name", "");
+                                                    result.put("address", null);
+                                                    result.put("icon_url", imageLocation);
+                                                    conn.close();
+                                                    response.complete(result);
+                                                } else {
+                                                    conn.close();
+                                                    response.fail("Profile image record create failed");
+                                                }
+
+                                            });
+                                } catch (Exception ex) {
+                                    conn.close();
+                                    response.fail("Image file save failed");
+                                }
+                            }
+                        } else {
+                            conn.close();
+                            response.fail(company.result().toString());
+                        }
+                    });
+
+                } else {
+                    response.fail("Database Connection Failed");
+                }
+
+            });
+        } catch (Exception ex) {
+            response.fail(ex);
+        }
+        return response.future();
+    }
+
+    public Future<JsonObject> getCompanyIcon(String companyId) {
+        Promise<JsonObject> response = Promise.promise();
+        try {
+            dbClient.getPool().getConnection(con -> {
+                if (con.succeeded()) {
+                    SqlConnection conn = con.result();
+                    isCompanyExists(conn, companyId).andThen(company -> {
+                        if (company.succeeded()) {
+                            if (company.result()) {
+                                conn.query("select * from com_company where id = '" + companyId + "'")
+                                        .execute(res -> {
+                                            RowSet<Row> rows = res.result();
+                                            JsonObject companyResult = new JsonObject();
+                                            if (rows.size() > 0) {
+                                                for (Row row : rows) {
+                                                    companyResult.put("id", row.getString("id"));
+                                                    companyResult.put("company_name", row.getString("company_name"));
+                                                    companyResult.put("address", row.getString("address"));
+                                                    companyResult.put("icon_url", row.getString("icon_url"));
+                                                    conn.close();
+                                                    response.complete(companyResult);
+                                                    break;
+                                                }
+                                            } else {
+                                                conn.close();
+                                                response.fail("Company does not exists");
+                                            }
+
+                                        });
+                            } else {
+                                conn.close();
+                                response.fail("Company does not exists");
+                            }
+                        } else {
+                            conn.close();
+                            response.fail(company.result().toString());
+                        }
+                    });
+                } else {
+                    response.fail("Database Connection Failed");
+                }
+            });
+        } catch (Exception ex) {
+            response.fail(ex);
+        }
+
+        return response.future();
+    }
+
+    private Future<Boolean> isCompanyExists(SqlConnection con, String companyId) {
+        Promise<Boolean> response = Promise.promise();
+        try {
+            con
+                    .query("select * from com_company where id = '" + companyId + "'")
+                    .execute(res -> {
+                        if (res.succeeded()) {
+                            if (res.result().size() > 0) {
+                                response.complete(true);
+                            } else {
+                                response.complete(false);
+                            }
+                        } else {
+                            response.fail(res.cause().getMessage());
+                        }
+
+                    });
+        } catch (Exception e) {
+            throw e;
+        }
+        return response.future();
+    }
+
 }

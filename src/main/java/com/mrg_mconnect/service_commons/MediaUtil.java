@@ -4,6 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import javax.imageio.ImageIO;
 
@@ -79,5 +82,19 @@ public class MediaUtil {
         graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
         graphics2D.dispose();
         return resizedImage;
+    }
+
+    public static void fileCopy(String imageSource, String targetSource) throws Exception {
+        try {
+
+            File targetFile = new File(targetSource);
+            targetFile.getParentFile().mkdirs();
+
+            Files.copy(Paths.get(imageSource), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        } catch (IOException ex) {
+            throw new Exception("Image copy error");
+        }
+
     }
 }

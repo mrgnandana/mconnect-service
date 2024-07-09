@@ -34,6 +34,9 @@ public class MediaServiceSubRoute extends SubRouter {
 
         subRouter.post(mountPoint + "/images/profiles/:uid/").handler(this::handleProfileImageUpload);
         subRouter.get(mountPoint + "/images/profiles/:uid/").handler(this::handleGetProfileImage);
+        
+        subRouter.post(mountPoint + "/images/company/:cid/").handler(this::handleCompanyIconUpload);
+        subRouter.get(mountPoint + "/images/company/:cid/").handler(this::handleGetCompanyIcon);
 
     }
 
@@ -74,7 +77,7 @@ public class MediaServiceSubRoute extends SubRouter {
                         ErrorResponse.getBuilder()
                                 .response(response)
                                 .statusCode(400)
-                                .message(res.cause().getMessage())
+                                .message(msgResult.getString("message"))
                                 .errorNo(400)
                                 .build();
                     }
@@ -116,24 +119,142 @@ public class MediaServiceSubRoute extends SubRouter {
                 if (res.succeeded()) {
                     JsonObject msgResult = (JsonObject) res.result().body();
                     if (msgResult.getBoolean("success")) {
-                        String imagepath = MediaUtil.MEDIA_PATH
-                                + msgResult.getJsonObject("data").getString("image_location");
+                        String imagepath = MediaUtil.MEDIA_PATH + msgResult.getJsonObject("data").getString("image_location");
                         File file = new File(imagepath);
                         if (file.isFile()) {
                             response.sendFile(file.getAbsolutePath());
                         } else {
-                            JsonObject errorRresponseData = new ErrorResponse.Builder()
-                                    .message("File not found")
-                                    .errorNo(400).build();
-                            ctx.response().setStatusCode(400)
-                                    .putHeader("content-type", "application/json")
-                                    .end(errorRresponseData.encodePrettily());
+                            ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message("File not found")
+                                .errorNo(400)
+                                .build();
                         }
                     } else {
                         ErrorResponse.getBuilder()
                                 .response(response)
                                 .statusCode(400)
-                                .message(res.cause().getMessage())
+                                .message(msgResult.getString("message"))
+                                .errorNo(400)
+                                .build();
+                    }
+                } else {
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
+                }
+            });
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
+        }
+
+    }
+
+    private void handleCompanyIconUpload(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            JsonObject requestObj = new JsonObject();
+            String uploadedFileName = null;
+            String contentType = null;
+            for (FileUpload f : ctx.fileUploads()) {
+                uploadedFileName = f.uploadedFileName();
+                contentType = f.contentType();
+                break;
+            }
+            final String uploadedFileNameValue = uploadedFileName;
+
+            String companyId = ctx.request().getParam("cid").trim();
+
+            if (companyId == null || companyId.isEmpty()) {
+                throw new Exception("Company id is required");
+            }
+
+            requestObj.put("company_id", companyId);
+            requestObj.put("uploaded_file_name", uploadedFileName);
+            requestObj.put("content_type", contentType);
+
+            JsonObject msg = new JsonObject().put("method", "media.upload_company_icon").put("data", requestObj);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, deliveryOptions, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        cleanFile(ctx, uploadedFileNameValue);
+                        response.putHeader("content-type", "application/json")
+                                .end(msgResult.getJsonObject("data").encodePrettily());
+                    } else {
+                        cleanFile(ctx, uploadedFileNameValue);
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message(msgResult.getString("message"))
+                                .errorNo(400)
+                                .build();
+                    }
+                } else {
+                    cleanFile(ctx, uploadedFileNameValue);
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
+                }
+            });
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
+        }
+
+    }
+
+    private void handleGetCompanyIcon(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            JsonObject requestObj = new JsonObject();
+            String companyId = ctx.request().getParam("cid").trim();
+
+            if (companyId == null || companyId.isEmpty()) {
+                throw new Exception("Company id is required");
+            }
+
+            requestObj.put("company_id", companyId);
+            JsonObject msg = new JsonObject().put("method", "media.get_company_icon").put("data", requestObj);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        String imagepath = MediaUtil.MEDIA_PATH + msgResult.getJsonObject("data").getString("icon_url");
+                        File file = new File(imagepath);
+                        if (file.isFile()) {
+                            response.sendFile(file.getAbsolutePath());
+                        } else {
+                                    ErrorResponse.getBuilder()
+                                    .response(response)
+                                    .statusCode(400)
+                                    .message("File not found")
+                                    .errorNo(400)
+                                    .build();
+                        }
+                    } else {
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message(msgResult.getString("message"))
                                 .errorNo(400)
                                 .build();
                     }

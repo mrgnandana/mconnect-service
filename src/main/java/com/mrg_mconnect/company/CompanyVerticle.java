@@ -48,6 +48,10 @@ public class CompanyVerticle extends AbstractVerticle {
                         getPositionList(message, req.getJsonObject("data"));
                         break;
 
+                    case "company.details":
+                        getCompanyDetails(message, req.getJsonObject("data"));
+                        break;
+
                     default:
                         throw new Exception("Invalid option");
                 }
@@ -63,12 +67,12 @@ public class CompanyVerticle extends AbstractVerticle {
 
         companyManager.getContactList(data.getInteger("page"), data.getInteger("limit"), data.getString("user_id"),
                 data.getLong("update_time")).andThen(res -> {
-                    if (res.succeeded()) {
-                        MessageHelper.successReply(message, res.result());
-                    } else {
-                        MessageHelper.errorReply(message, res.cause().getMessage(), 2);
-                    }
-                });
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
+            }
+        });
     }
 
     private void getStructureList(Message<Object> message, JsonObject data) {
@@ -89,6 +93,17 @@ public class CompanyVerticle extends AbstractVerticle {
                 MessageHelper.successReply(message, res.result());
             } else {
                 MessageHelper.errorReply(message, "Get Company Position List request failed", 2);
+            }
+        });
+    }
+
+    private void getCompanyDetails(Message<Object> message, JsonObject data) {
+
+        companyManager.getCompanyDetails(data.getString("company_id")).andThen(res -> {
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
             }
         });
     }

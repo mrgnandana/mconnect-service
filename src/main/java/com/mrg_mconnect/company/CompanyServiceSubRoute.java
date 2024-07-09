@@ -7,7 +7,6 @@ import com.mrg_mconnect.service_commons.SubRouter;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -30,6 +29,8 @@ public class CompanyServiceSubRoute extends SubRouter {
         //athenticate 
         //to do: uncomment to enable jwt token check
         //subRouter.route(mountPoint + "/*").handler(JWTAuthHandler.create(new AuthManager(vertx).getAuthProvider()));
+        // company
+        subRouter.get(mountPoint + "/:cid").handler(this::handleGetCompanyDetails);
 
         // contact
         subRouter.post(mountPoint + "/contacts/list").handler(this::handleContactList);
@@ -85,7 +86,7 @@ public class CompanyServiceSubRoute extends SubRouter {
                         ErrorResponse.getBuilder()
                                 .response(response)
                                 .statusCode(400)
-                                .message(res.cause().getMessage())
+                                .message(msgResult.getString("message"))
                                 .errorNo(400)
                                 .build();
                     }
@@ -125,7 +126,7 @@ public class CompanyServiceSubRoute extends SubRouter {
                         ErrorResponse.getBuilder()
                                 .response(response)
                                 .statusCode(400)
-                                .message(res.cause().getMessage())
+                                .message(msgResult.getString("message"))
                                 .errorNo(400)
                                 .build();
                     }
@@ -165,7 +166,55 @@ public class CompanyServiceSubRoute extends SubRouter {
                         ErrorResponse.getBuilder()
                                 .response(response)
                                 .statusCode(400)
-                                .message(res.cause().getMessage())
+                                .message(msgResult.getString("message"))
+                                .errorNo(400)
+                                .build();
+                    }
+                } else {
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
+                }
+            });
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
+        }
+
+    }
+
+    private void handleGetCompanyDetails(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            JsonObject requestObj = new JsonObject();
+
+            String companyId = ctx.request().getParam("cid").trim();
+
+            if (companyId == null || companyId.isEmpty()) {
+                throw new Exception("Company id is required");
+            }
+
+            requestObj.put("company_id", companyId);
+            JsonObject msg = new JsonObject().put("method", "company.details").put("data", requestObj);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        response.putHeader("content-type", "application/json")
+                                .end(msgResult.getJsonObject("data").encodePrettily());
+                    } else {
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message(msgResult.getString("message"))
                                 .errorNo(400)
                                 .build();
                     }

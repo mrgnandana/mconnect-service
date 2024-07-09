@@ -38,7 +38,7 @@ public class CompanyManager {
                                 conn.query("select * from vcom_employee where last_updated_time >= " + lastUpdatedAt
                                         + " and is_deactivated = 0  limit " + limit + " offset "
                                         + ((page - 1) * limit))
-                                        .execute().onComplete(res -> {
+                                        .execute(res -> {
                                             RowSet<Row> rows = res.result();
                                             JsonArray result = new JsonArray();
                                             for (Row row : rows) {
@@ -87,7 +87,7 @@ public class CompanyManager {
         try {
             con
                     .query("select * from com_employee where id = '" + userId + "'")
-                    .execute().onComplete(res -> {
+                    .execute(res -> {
                         if (res.succeeded()) {
                             if (res.result().size() > 0) {
                                 response.complete(true);
@@ -111,7 +111,7 @@ public class CompanyManager {
             dbClient.getPool().getConnection(con -> {
                 if (con.succeeded()) {
                     SqlConnection conn = con.result();
-                    conn.query("select * from com_structure order by sort_index").execute().onComplete(res -> {
+                    conn.query("select * from com_structure order by sort_index").execute(res -> {
                         RowSet<Row> rows = res.result();
                         JsonArray result = new JsonArray();
                         for (Row row : rows) {
@@ -144,7 +144,7 @@ public class CompanyManager {
             dbClient.getPool().getConnection(con -> {
                 if (con.succeeded()) {
                     SqlConnection conn = con.result();
-                    conn.query("select * from com_position").execute().onComplete(res -> {
+                    conn.query("select * from com_position").execute(res -> {
                         RowSet<Row> rows = res.result();
                         JsonArray result = new JsonArray();
                         for (Row row : rows) {
@@ -156,6 +156,43 @@ public class CompanyManager {
                         }
                         conn.close();
                         response.complete(result);
+                    });
+                } else {
+                    response.fail("Database Connection Failed");
+                }
+            });
+        } catch (Exception ex) {
+            response.fail(ex);
+        }
+
+        return response.future();
+    }
+
+    public Future<JsonObject> getCompanyDetails(String companyId) {
+        Promise<JsonObject> response = Promise.promise();
+        try {
+            dbClient.getPool().getConnection(con -> {
+                if (con.succeeded()) {
+                    SqlConnection conn = con.result();
+                    conn.query("select * from com_company where id ='" + companyId + "'").execute(res -> {
+                        RowSet<Row> rows = res.result();
+                        JsonObject company = new JsonObject();
+                        if (rows.size() > 0) {
+                            for (Row row : rows) {
+                                company.put("id", row.getString("id"));
+                                company.put("company_name", row.getString("company_name"));
+                                company.put("address", row.getString("address"));
+                                company.put("icon_url", row.getString("icon_url"));
+                                break;
+                            }
+                            conn.close();
+                            response.complete(company);
+
+                        } else {
+                            conn.close();
+                            response.fail("Company does not exists");
+                        }
+
                     });
                 } else {
                     response.fail("Database Connection Failed");
