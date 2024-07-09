@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "24cbc850-2fa9-40bf-9b50-f370004f855a",
+		"_postman_id": "a241a2f4-4e10-4be1-b97e-eeefded894cb",
 		"name": "mconnect",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "8716363"
+		"_exporter_id": "17537768"
 	},
 	"item": [
 		{
@@ -1027,17 +1027,8 @@
 		{
 			"name": "company/positions/list",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"page\": 1,\n    \"limit\": 100\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
 					"raw": "{{backedURL}}/company/positions/list",
 					"host": [
@@ -1294,13 +1285,14 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"id\":\"\",\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "",
+							"type": "file",
+							"src": "postman-cloud:///1ef3dc28-6b39-4300-b6a1-3b807021fd8b"
 						}
-					}
+					]
 				},
 				"url": {
 					"raw": "{{backedURL}}/media/images/profiles/{_pid}/",
@@ -1312,6 +1304,77 @@
 						"images",
 						"profiles",
 						"{_pid}",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media/images/company/{_cid}/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "",
+							"type": "file",
+							"src": "postman-cloud:///1ef3dc28-6b39-4300-b6a1-3b807021fd8b"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{backedURL}}/media/images/company/c1/",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"media",
+						"images",
+						"company",
+						"c1",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media/images/company/{_pid}/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/media/images/company/c1/",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"media",
+						"images",
+						"company",
+						"c1",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/company/{cid}/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{backedURL}}/company/cv1/",
+					"host": [
+						"{{backedURL}}"
+					],
+					"path": [
+						"company",
+						"cv1",
 						""
 					]
 				}
