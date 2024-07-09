@@ -118,6 +118,20 @@
 		},
 		{
 			"name": "auth/token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.globals.set(\"accessToken\", jsonData.access_token);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -329,12 +343,25 @@
 		},
 		{
 			"name": "auth/refresh",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.globals.set(\"accessToken\", jsonData.access_token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"grant_type\" : \"http://auth0.com/oauth/grant-type/passwordless/otp\",\n  \"client_id\": \"{yourAuth0ClientID}\",\n  \"client_secret\": \"{yourClientSecret}\", // only for web apps, native apps don’t have a client secret\n  \"refresh_token\":\"r1\"\n}",
+					"raw": "{\n  \"refresh_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiIzNTFkYzgzMS0xZjUyLTQwNTEtOWQwZi01NGU3YTJkMzNiMzkiLCJzdWIiOiJ1MiIsImlhdCI6MTcyMDUyMDIzNX0.3NOqD9hmwelq-REHSaxy2FhPd8eR3jXfO5TC70w5s00\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -868,11 +895,21 @@
 		{
 			"name": "company/contacts/list",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"user_id\": \"\",//get this from token\n    \"page\": 1,\n    \"limit\": 100\n}",
+					"raw": "{\n    \"user_id\": \"u1\",//get this from token\n    \"page\": 1,\n    \"limit\": 100,\n    \"last_updated_at\": 0\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -880,13 +917,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{backedURL}}/company/employees/list",
+					"raw": "{{backedURL}}/company/contacts/list",
 					"host": [
 						"{{backedURL}}"
 					],
 					"path": [
 						"company",
-						"employees",
+						"contacts",
 						"list"
 					]
 				}
