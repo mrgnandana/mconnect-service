@@ -16,7 +16,7 @@ public class MediaUtil {
 
     public static String MEDIA_PATH = "";
 
-    public static void createThumbnail(String imageSource, String targetSource) throws Exception {
+    public static void createProfileImage(String imageSource, String targetSource) throws Exception {
         try {
 
             File inputImageFile = new File(imageSource);
@@ -28,6 +28,17 @@ public class MediaUtil {
             graphicThumFile.getParentFile().mkdirs();
 
             BufferedImage img = ImageIO.read(inputImageFile);
+
+            double imgRatio = (double) img.getHeight() / (double) img.getWidth();
+
+            if (img.getHeight() > img.getWidth()) {
+                int resizeHeight = (int) (imgRatio * IMAGE_WIDTH);
+                img = resizeImage(img, IMAGE_WIDTH, resizeHeight);
+            } else {
+                int resizeWidth = (int) (IMAGE_HEIGHT / imgRatio);
+                img = resizeImage(img, resizeWidth, IMAGE_HEIGHT);
+            }
+
             BufferedImage cropped = centerCropImage(img, IMAGE_WIDTH, IMAGE_HEIGHT);
             ImageIO.write(cropped, FORMAT_PNG.toLowerCase(), graphicThumFile);
 
@@ -35,7 +46,7 @@ public class MediaUtil {
             cropped.flush();
 
         } catch (IOException ex) {
-            throw new Exception("Thumbnail image save error");
+            throw new Exception("Image save error");
         }
 
     }
@@ -52,7 +63,7 @@ public class MediaUtil {
                 height = imageHeight;
             }
 
-            BufferedImage croppedImage = inputImage.getSubimage((imageWidth/2)-(width/2),(imageHeight/2)- (height/2), width, height);
+            BufferedImage croppedImage = inputImage.getSubimage((imageWidth / 2) - (width / 2), (imageHeight / 2) - (height / 2), width, height);
 
             return croppedImage;
 
@@ -60,5 +71,13 @@ public class MediaUtil {
             throw new Exception("Image Crop error");
         }
 
+    }
+
+    public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = resizedImage.createGraphics();
+        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.dispose();
+        return resizedImage;
     }
 }

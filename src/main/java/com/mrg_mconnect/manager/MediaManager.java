@@ -40,25 +40,24 @@ public class MediaManager {
                                         .execute(res -> {
                                             RowSet<Row> rows = res.result();
                                             try {
-                                                String imageLocation = "media/profile_images/" + userId + "."
-                                                        + contentType.replace("image/", "");
-                                                MediaUtil.createThumbnail(uploadedFileName, MediaUtil.MEDIA_PATH + imageLocation);
+                                                String imageLocation = "media/profile_images/" + userId + "." + contentType.replace("image/", "");
+                                                MediaUtil.createProfileImage(uploadedFileName, MediaUtil.MEDIA_PATH + imageLocation);
                                                 if (rows.size() > 0) {
                                                     conn.query(
-                                                        "update mda_profile_image set image_location = '"+imageLocation+"' where user_id = '" + userId+ "'")
-                                                        .execute(ar1 -> {
-                                                            if (ar1.succeeded()) {
-                                                                JsonObject result = new JsonObject();
-                                                                result.put("user_id", userId);
-                                                                result.put("image_location", imageLocation);
-                                                                conn.close();
-                                                                response.complete(result);
-                                                            } else {
-                                                                conn.close();
-                                                                response.fail("Profile image update failed");
-                                                            }
+                                                            "update mda_profile_image set image_location = '" + imageLocation + "' where user_id = '" + userId + "'")
+                                                            .execute(ar1 -> {
+                                                                if (ar1.succeeded()) {
+                                                                    JsonObject result = new JsonObject();
+                                                                    result.put("user_id", userId);
+                                                                    result.put("image_location", imageLocation);
+                                                                    conn.close();
+                                                                    response.complete(result);
+                                                                } else {
+                                                                    conn.close();
+                                                                    response.fail("Profile image update failed");
+                                                                }
 
-                                                        });
+                                                            });
 
                                                 } else {
 
