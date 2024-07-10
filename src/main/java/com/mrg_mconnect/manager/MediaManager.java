@@ -141,19 +141,25 @@ public class MediaManager {
                             if (user.result()) {
                                 conn.query("select * from mda_profile_image where user_id = '" + userId + "'")
                                         .execute(res -> {
-                                            RowSet<Row> rows = res.result();
-                                            JsonObject profileImage = new JsonObject();
-                                            if (rows.size() > 0) {
-                                                for (Row row : rows) {
-                                                    profileImage.put("user_id", row.getString("user_id"));
-                                                    profileImage.put("image_location", row.getString("image_location"));
+                                            if (res.succeeded()) {
+                                                RowSet<Row> rows = res.result();
+                                                JsonObject profileImage = new JsonObject();
+                                                if (rows.size() > 0) {
+                                                    for (Row row : rows) {
+                                                        profileImage.put("user_id", row.getString("user_id"));
+                                                        profileImage.put("image_location", row.getString("image_location"));
+                                                        conn.close();
+                                                        response.complete(profileImage);
+                                                        break;
+                                                    }
+                                                } else {
                                                     conn.close();
-                                                    response.complete(profileImage);
-                                                    break;
+                                                    response.fail("Profile Image does not exists");
                                                 }
+
                                             } else {
                                                 conn.close();
-                                                response.fail("Profile Image does not exists");
+                                                response.fail("Get Profile image failed");
                                             }
 
                                         });
@@ -264,21 +270,26 @@ public class MediaManager {
                             if (company.result()) {
                                 conn.query("select * from com_company where id = '" + companyId + "'")
                                         .execute(res -> {
-                                            RowSet<Row> rows = res.result();
-                                            JsonObject companyResult = new JsonObject();
-                                            if (rows.size() > 0) {
-                                                for (Row row : rows) {
-                                                    companyResult.put("id", row.getString("id"));
-                                                    companyResult.put("company_name", row.getString("company_name"));
-                                                    companyResult.put("address", row.getString("address"));
-                                                    companyResult.put("icon_url", row.getString("icon_url"));
+                                            if (res.succeeded()) {
+                                                RowSet<Row> rows = res.result();
+                                                JsonObject companyResult = new JsonObject();
+                                                if (rows.size() > 0) {
+                                                    for (Row row : rows) {
+                                                        companyResult.put("id", row.getString("id"));
+                                                        companyResult.put("company_name", row.getString("company_name"));
+                                                        companyResult.put("address", row.getString("address"));
+                                                        companyResult.put("icon_url", row.getString("icon_url"));
+                                                        conn.close();
+                                                        response.complete(companyResult);
+                                                        break;
+                                                    }
+                                                } else {
                                                     conn.close();
-                                                    response.complete(companyResult);
-                                                    break;
+                                                    response.fail("Company does not exists");
                                                 }
                                             } else {
                                                 conn.close();
-                                                response.fail("Company does not exists");
+                                                response.fail("Get Company Icon  failed");
                                             }
 
                                         });

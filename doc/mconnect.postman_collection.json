@@ -937,7 +937,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"raw": "{\n    \"position_name\": \"Developer\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -965,7 +965,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\":\"\",\n    \"name\": \"\",\n    \"mobile_phone\": \"\",\n    \"department_id\":\"\",\n    \"email\":\"\"\n}",
+					"raw": "{\n    \"position_name\": \"SE\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -973,14 +973,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{backedURL}}/company/positions/{_id}",
+					"raw": "{{backedURL}}/company/positions/6",
 					"host": [
 						"{{backedURL}}"
 					],
 					"path": [
 						"company",
 						"positions",
-						"{_id}"
+						"6"
 					]
 				}
 			},
@@ -1027,7 +1027,7 @@
 		{
 			"name": "company/positions/list",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"url": {
 					"raw": "{{backedURL}}/company/positions/list",

@@ -75,6 +75,9 @@ CREATE TABLE `com_company` (
 
 /*Data for the table `com_company` */
 
+insert  into `com_company`(`id`,`company_name`,`address`,`icon_url`) values 
+('c1','MRG','Colombo','media/company_icon/c1.png');
+
 /*Table structure for table `com_employee` */
 
 DROP TABLE IF EXISTS `com_employee`;
@@ -90,6 +93,7 @@ CREATE TABLE `com_employee` (
   `anyone_can_call` tinyint NOT NULL DEFAULT '1',
   `last_updated_time` int NOT NULL DEFAULT '0',
   `is_deactivated` tinyint NOT NULL DEFAULT '0',
+  `deleted` tinyint DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQUE_EMP_ID` (`emp_id`),
   UNIQUE KEY `UNIQUE_MOBILE_NO` (`mobile_no`)
@@ -97,10 +101,10 @@ CREATE TABLE `com_employee` (
 
 /*Data for the table `com_employee` */
 
-insert  into `com_employee`(`id`,`emp_id`,`emp_name`,`mobile_no`,`email`,`position_id`,`company_structure_id`,`anyone_can_call`,`last_updated_time`,`is_deactivated`) values 
-('u1','e1','Sampath Godamunne','+94763756823','sampath@microrsg.com',2,1,1,1720416264,0),
-('u2','e2','Nandana Gamlath','+94713057295','nandana@microrsg.com',3,6,1,1720416264,0),
-('u3','e3','Yohan Chathuranga','+94779811856','yc@micrornd.com',4,7,1,1720416264,0);
+insert  into `com_employee`(`id`,`emp_id`,`emp_name`,`mobile_no`,`email`,`position_id`,`company_structure_id`,`anyone_can_call`,`last_updated_time`,`is_deactivated`,`deleted`) values 
+('u1','e1','Sampath Godamunne','+94763756823','sampath@microrsg.com',2,1,1,1720416264,0,0),
+('u2','e2','Nandana Gamlath','+94713057295','nandana@microrsg.com',3,6,1,1720416264,0,0),
+('u3','e3','Yohan Chathuranga','+94779811856','yc@micrornd.com',4,7,1,1720416264,0,0);
 
 /*Table structure for table `com_position` */
 
@@ -109,16 +113,18 @@ DROP TABLE IF EXISTS `com_position`;
 CREATE TABLE `com_position` (
   `position_id` int NOT NULL,
   `position_name` varchar(128) NOT NULL,
+  `deleted` tinyint DEFAULT '0',
   PRIMARY KEY (`position_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 /*Data for the table `com_position` */
 
-insert  into `com_position`(`position_id`,`position_name`) values 
-(1,'NA'),
-(2,'CEO'),
-(3,'Architect'),
-(4,'Tech Lead');
+insert  into `com_position`(`position_id`,`position_name`,`deleted`) values 
+(1,'NA',0),
+(2,'CEO',0),
+(3,'Architect',0),
+(4,'Tech Lead',0),
+(5,'SE',1);
 
 /*Table structure for table `com_structure` */
 
@@ -130,19 +136,20 @@ CREATE TABLE `com_structure` (
   `structure_name` varchar(128) DEFAULT NULL,
   `structure_ref` varchar(64) DEFAULT NULL,
   `sort_index` int NOT NULL DEFAULT '0',
+  `deleted` tinyint DEFAULT '0',
   PRIMARY KEY (`structure_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 /*Data for the table `com_structure` */
 
-insert  into `com_structure`(`structure_id`,`structure_parent_id`,`structure_name`,`structure_ref`,`sort_index`) values 
-(1,0,'Micro RSG','MRG',0),
-(2,1,'Colombo Branch','CB',1),
-(3,2,'Finance Department','F_D',2),
-(4,3,'Account Division','A@D',3),
-(5,1,'Kandy Branch','KB',5),
-(6,2,'Development Department','D_D',2),
-(7,6,'Backend Service','B@S',4);
+insert  into `com_structure`(`structure_id`,`structure_parent_id`,`structure_name`,`structure_ref`,`sort_index`,`deleted`) values 
+(1,0,'Micro RSG','MRG',0,0),
+(2,1,'Colombo Branch','CB',1,0),
+(3,2,'Finance Department','F_D',2,0),
+(4,3,'Account Division','A@D',3,0),
+(5,1,'Kandy Branch','KB',5,0),
+(6,2,'Development Department','D_D',2,0),
+(7,6,'Backend Service','B@S',4,0);
 
 /*Table structure for table `mda_profile_image` */
 
@@ -195,6 +202,7 @@ DROP TABLE IF EXISTS `vcom_employee`;
  `anyone_can_call` tinyint ,
  `last_updated_time` int ,
  `is_deactivated` tinyint ,
+ `deleted` tinyint ,
  `position_name` varchar(128) ,
  `company_structure_name` varchar(128) 
 )*/;
@@ -211,7 +219,7 @@ DROP TABLE IF EXISTS `vcom_employee`;
 /*!50001 DROP TABLE IF EXISTS `vcom_employee` */;
 /*!50001 DROP VIEW IF EXISTS `vcom_employee` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vcom_employee` AS select `ce`.`id` AS `id`,`ce`.`emp_id` AS `emp_id`,`ce`.`emp_name` AS `emp_name`,`ce`.`mobile_no` AS `mobile_no`,`ce`.`email` AS `email`,`ce`.`position_id` AS `position_id`,`ce`.`company_structure_id` AS `company_structure_id`,`ce`.`anyone_can_call` AS `anyone_can_call`,`ce`.`last_updated_time` AS `last_updated_time`,`ce`.`is_deactivated` AS `is_deactivated`,`cp`.`position_name` AS `position_name`,`cs`.`structure_name` AS `company_structure_name` from ((`com_employee` `ce` left join `com_position` `cp` on((`ce`.`position_id` = `cp`.`position_id`))) left join `com_structure` `cs` on((`ce`.`company_structure_id` = `cs`.`structure_id`))) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vcom_employee` AS select `ce`.`id` AS `id`,`ce`.`emp_id` AS `emp_id`,`ce`.`emp_name` AS `emp_name`,`ce`.`mobile_no` AS `mobile_no`,`ce`.`email` AS `email`,`ce`.`position_id` AS `position_id`,`ce`.`company_structure_id` AS `company_structure_id`,`ce`.`anyone_can_call` AS `anyone_can_call`,`ce`.`last_updated_time` AS `last_updated_time`,`ce`.`is_deactivated` AS `is_deactivated`,`ce`.`deleted` AS `deleted`,`cp`.`position_name` AS `position_name`,`cs`.`structure_name` AS `company_structure_name` from ((`com_employee` `ce` left join `com_position` `cp` on((`ce`.`position_id` = `cp`.`position_id`))) left join `com_structure` `cs` on((`ce`.`company_structure_id` = `cs`.`structure_id`))) */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -48,6 +48,22 @@ public class CompanyVerticle extends AbstractVerticle {
                         getPositionList(message, req.getJsonObject("data"));
                         break;
 
+                    case "company.position_create":
+                        createCompanyPosition(message, req.getJsonObject("data"));
+                        break;
+
+                    case "company.position_update":
+                        updateCompanyPosition(message, req.getJsonObject("data"));
+                        break;
+
+                    case "company.position_delete":
+                        deleteCompanyPosition(message, req.getJsonObject("data"));
+                        break;
+
+                    case "company.position_get":
+                        getCompanyPosition(message, req.getJsonObject("data"));
+                        break;
+
                     case "company.details":
                         getCompanyDetails(message, req.getJsonObject("data"));
                         break;
@@ -65,8 +81,7 @@ public class CompanyVerticle extends AbstractVerticle {
 
     private void getContactList(Message<Object> message, JsonObject data) {
 
-        companyManager.getContactList(data.getInteger("page"), data.getInteger("limit"), data.getString("user_id"),
-                data.getLong("update_time")).andThen(res -> {
+        companyManager.getContactList(data.getInteger("page"), data.getInteger("limit"), data.getString("user_id"), data.getLong("update_time")).andThen(res -> {
             if (res.succeeded()) {
                 MessageHelper.successReply(message, res.result());
             } else {
@@ -81,7 +96,7 @@ public class CompanyVerticle extends AbstractVerticle {
             if (res.succeeded()) {
                 MessageHelper.successReply(message, res.result());
             } else {
-                MessageHelper.errorReply(message, "Get Company Structure List request failed", 2);
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
             }
         });
     }
@@ -92,7 +107,51 @@ public class CompanyVerticle extends AbstractVerticle {
             if (res.succeeded()) {
                 MessageHelper.successReply(message, res.result());
             } else {
-                MessageHelper.errorReply(message, "Get Company Position List request failed", 2);
+                MessageHelper.errorReply(message,res.cause().getMessage(), 2);
+            }
+        });
+    }
+
+    private void createCompanyPosition(Message<Object> message, JsonObject data) {
+
+        companyManager.createCompanyPosition(data.getString("position_name")).andThen(res -> {
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
+            }
+        });
+    }
+
+    private void updateCompanyPosition(Message<Object> message, JsonObject data) {
+
+        companyManager.updateCompanyPosition(data.getInteger("position_id"),data.getString("position_name")).andThen(res -> {
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
+            }
+        });
+    }
+
+    private void deleteCompanyPosition(Message<Object> message, JsonObject data) {
+
+        companyManager.deleteCompanyPosition(data.getInteger("position_id")).andThen(res -> {
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
+            }
+        });
+    }
+
+    private void getCompanyPosition(Message<Object> message, JsonObject data) {
+
+        companyManager.getCompanyPosition(data.getInteger("position_id")).andThen(res -> {
+            if (res.succeeded()) {
+                MessageHelper.successReply(message, res.result());
+            } else {
+                MessageHelper.errorReply(message, res.cause().getMessage(), 2);
             }
         });
     }

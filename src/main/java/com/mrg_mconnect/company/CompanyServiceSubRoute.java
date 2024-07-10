@@ -40,7 +40,12 @@ public class CompanyServiceSubRoute extends SubRouter {
         subRouter.get(mountPoint + "/structure/list").handler(this::handleCompanyStructureList);
 
         // position
-        subRouter.get(mountPoint + "/positions/list").handler(this::handleCompanyPositionList);
+        subRouter.post(mountPoint + "/positions/").handler(this::handleCompanyCreatePosition);
+        subRouter.put(mountPoint + "/positions/:pid").handler(this::handleCompanyUpdatePosition);
+        subRouter.delete(mountPoint + "/positions/:pid").handler(this::handleCompanyDeletePosition);
+        subRouter.get(mountPoint + "/positions/:pid").handler(this::handleCompanyGetPosition);
+        subRouter.post(mountPoint + "/positions/list").handler(this::handleCompanyPositionList);
+
     }
 
     private void handleContactList(RoutingContext ctx) {
@@ -123,6 +128,209 @@ public class CompanyServiceSubRoute extends SubRouter {
                     if (msgResult.getBoolean("success")) {
                         response.putHeader("content-type", "application/json")
                                 .end(msgResult.getJsonArray("data").encodePrettily());
+                    } else {
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message(msgResult.getString("message"))
+                                .errorNo(400)
+                                .build();
+                    }
+                } else {
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
+                }
+            });
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
+        }
+
+    }
+
+    //company positions 
+    private void handleCompanyCreatePosition(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            JsonObject requestObj = ctx.body().asJsonObject();
+            String positionName = "";
+            if (requestObj.getString("position_name") != null) {
+                positionName = requestObj.getString("position_name").trim();
+            }
+
+            if (positionName.isEmpty()) {
+                throw new Exception("Position Name is required");
+            }
+
+            requestObj.put("position_name", positionName);
+            JsonObject msg = new JsonObject().put("method", "company.position_create").put("data", requestObj);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        response.putHeader("content-type", "application/json")
+                                .end(msgResult.getJsonObject("data").encodePrettily());
+                    } else {
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message(msgResult.getString("message"))
+                                .errorNo(400)
+                                .build();
+                    }
+                } else {
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
+                }
+            });
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
+        }
+
+    }
+
+    private void handleCompanyUpdatePosition(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            JsonObject requestObj = ctx.body().asJsonObject();
+            String positionId = ctx.request().getParam("pid").trim();;
+
+            if (positionId == null || positionId.isEmpty()) {
+                throw new Exception("Position Id is required");
+            }
+
+            String positionName = "";
+            if (requestObj.getString("position_name") != null) {
+                positionName = requestObj.getString("position_name").trim();
+            }
+
+            if (positionName.isEmpty()) {
+                throw new Exception("Position Name is required");
+            }
+
+            requestObj.put("position_id", Integer.parseInt(positionId));
+            requestObj.put("position_name", positionName);
+
+            JsonObject msg = new JsonObject().put("method", "company.position_update").put("data", requestObj);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        response.putHeader("content-type", "application/json")
+                                .end(msgResult.getJsonObject("data").encodePrettily());
+                    } else {
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message(msgResult.getString("message"))
+                                .errorNo(400)
+                                .build();
+                    }
+                } else {
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
+                }
+            });
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
+        }
+
+    }
+
+    private void handleCompanyDeletePosition(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            JsonObject requestObj = new JsonObject();
+            String positionId = ctx.request().getParam("pid").trim();;
+
+            if (positionId == null || positionId.isEmpty()) {
+                throw new Exception("Position Id is required");
+            }
+
+            requestObj.put("position_id", Integer.parseInt(positionId));
+            JsonObject msg = new JsonObject().put("method", "company.position_delete").put("data", requestObj);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        response.putHeader("content-type", "application/json").setStatusCode(204)
+                                .end();
+                    } else {
+                        ErrorResponse.getBuilder()
+                                .response(response)
+                                .statusCode(400)
+                                .message(msgResult.getString("message"))
+                                .errorNo(400)
+                                .build();
+                    }
+                } else {
+                    ErrorResponse.getBuilder()
+                            .response(response)
+                            .statusCode(400)
+                            .message(res.cause().getMessage())
+                            .errorNo(400)
+                            .build();
+                }
+            });
+        } catch (Exception ex) {
+            ErrorResponse.getBuilder()
+                    .response(response)
+                    .statusCode(400)
+                    .message(ex.getMessage())
+                    .errorNo(400)
+                    .build();
+        }
+
+    }
+
+    private void handleCompanyGetPosition(RoutingContext ctx) {
+        HttpServerResponse response = ctx.response();
+
+        try {
+            JsonObject requestObj = new JsonObject();
+            String positionId = ctx.request().getParam("pid").trim();;
+
+            if (positionId == null || positionId.isEmpty()) {
+                throw new Exception("Position Id is required");
+            }
+
+            requestObj.put("position_id", Integer.parseInt(positionId));
+            JsonObject msg = new JsonObject().put("method", "company.position_get").put("data", requestObj);
+            vertx.eventBus().request(EVENT_BUS_ADDRESS, msg, res -> {
+                if (res.succeeded()) {
+                    JsonObject msgResult = (JsonObject) res.result().body();
+                    if (msgResult.getBoolean("success")) {
+                        response.putHeader("content-type", "application/json")
+                                .end(msgResult.getJsonObject("data").encodePrettily());
                     } else {
                         ErrorResponse.getBuilder()
                                 .response(response)
