@@ -1,7 +1,5 @@
 package com.mrg_mconnect.auth;
 
-import java.util.Map;
-
 import com.mrg_mconnect.manager.AuthManager;
 import com.mrg_mconnect.service_commons.ErrorResponse;
 import com.mrg_mconnect.service_commons.SubRouter;
@@ -9,15 +7,9 @@ import com.mrg_mconnect.service_commons.SubRouter;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.PubSecKeyOptions;
-import io.vertx.ext.auth.authentication.Credentials;
-import io.vertx.ext.auth.authentication.TokenCredentials;
-import io.vertx.ext.auth.jwt.JWTAuth;
-import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.ext.web.handler.JWTAuthHandler;
 
 /**
  *

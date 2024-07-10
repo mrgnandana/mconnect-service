@@ -2,8 +2,8 @@
     "service.port": 8089,
     "db.port":3306,
     "db.host":"localhost",
-    "db.user":"root",
-    "db.user.password":"",
+    "db.user":"root",    
+    "db.user.password":"root",
     "db.name":"mconnect-db",
     "media_base_path":"D://spk//mconnect//"
 }

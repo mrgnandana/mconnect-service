@@ -95,7 +95,7 @@ public class AuthManager {
                                                 mNo = row.getString("mobile_no");
                                                 break;
                                             }
-                                            String otp = getRandomNumberString();
+                                            String otp = "123456";//getRandomNumberString();
                                             String otpSms = "Use OTP: " + otp;
                                             final String mobileNx = mNo;
 

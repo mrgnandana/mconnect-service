@@ -28,7 +28,8 @@ public class CompanyServiceSubRoute extends SubRouter {
         String mountPoint = "/company";
         //athenticate 
         //to do: uncomment to enable jwt token check
-        //subRouter.route(mountPoint + "/*").handler(JWTAuthHandler.create(new AuthManager(vertx).getAuthProvider()));
+        subRouter.route(mountPoint + "/*").handler(JWTAuthHandler.create(new AuthManager(vertx).getAuthProvider()));
+
         // company
         subRouter.get(mountPoint + "/:cid").handler(this::handleGetCompanyDetails);
 
